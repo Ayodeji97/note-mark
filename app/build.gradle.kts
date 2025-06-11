@@ -54,6 +54,8 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
 
+    implementation(libs.androidx.core.splashscreen)
+
     // Ktor for networking
     implementation(libs.bundles.ktor)
 
