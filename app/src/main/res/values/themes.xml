@@ -2,4 +2,18 @@
 <resources>
 
     <style name="Theme.NoteMark" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/note_mark_splash_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.NoteMark</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Prevent Action Bar from showing -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
