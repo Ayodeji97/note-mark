@@ -54,6 +54,7 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
 
+    // Splashscreen for managing app launch screens
     implementation(libs.androidx.core.splashscreen)
 
     // Ktor for networking
