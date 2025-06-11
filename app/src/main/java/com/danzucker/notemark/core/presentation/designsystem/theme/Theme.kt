@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 private val LightColorScheme = lightColorScheme(
     primary = NoteMarkBlue,
     secondary = NoteMarkBlue10,
-    onPrimaryContainer = NoteMarkWhite30,
-    onPrimary = NoteMarkWhite30,
+    onPrimaryContainer = NoteMarkWhite,
+    onPrimary = NoteMarkWhite,
     surface = NoteMarkSurface,
     surfaceVariant = NoteMarkWhite12,
     onSurface = NoteMarkOnSurfaceBlack,
