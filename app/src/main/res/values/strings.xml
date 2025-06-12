@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NoteMark</string>
+    <string name="landing_image_bg_content_description">Background image of the landing page</string>
+    <string name="landing_title">Your Own Collection\nof Notes</string>
+    <string name="landing_description">Capture your thoughts and ideas.</string>
+    <string name="get_started">Get Started</string>
+    <string name="login">Log In</string>
 </resources>

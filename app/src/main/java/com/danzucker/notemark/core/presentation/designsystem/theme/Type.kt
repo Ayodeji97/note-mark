@@ -73,7 +73,7 @@ val Typography = Typography(
     ),
     titleLarge = TextStyle(
         fontFamily = SpaceGrotesk,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Bold, // 700
         fontSize = 32.sp,
         lineHeight = 36.sp,
         letterSpacing = (32 * 0.01).sp,

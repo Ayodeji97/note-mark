@@ -45,9 +45,7 @@ fun NoteMarkBackground(
                     start = 16.dp,
                     end = 16.dp,
                     bottom = 40.dp
-                ),
-            verticalArrangement = Arrangement.spacedBy(40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                )
         ) {
             content()
         }

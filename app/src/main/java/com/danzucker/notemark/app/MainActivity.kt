@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.danzucker.notemark.auth.presentation.landing.PortraitLandingRoot
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,8 +21,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteMarkTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    PortraitLandingRoot(
+                        onGetStartedClick = {},
+                        onLoginInClick = {},
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

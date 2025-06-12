@@ -6,12 +6,14 @@ object Dimens {
 
     // Padding
     val paddingExtraSmall4 = 4.dp
+    val paddingSmall6 = 6.dp
     val paddingSmall8 = 8.dp
     val paddingSmallMedium12 = 12.dp
     val paddingMedium16 = 16.dp
     val paddingMediumLarge = 20.dp
     val paddingLarge24 = 24.dp
     val paddingExtraLarge32 = 32.dp
+    val paddingExtraLarge40 = 40.dp
 
     // Size
     val sizeExtraSmall4 = 4.dp
