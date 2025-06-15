@@ -16,6 +16,8 @@ koin = "4.0.0"
 ktor = "2.3.12"
 kotlinSerialization = "1.8.1"
 timber = "5.0.1"
+material3WindowSizeClass = "1.3.2"
+adaptiveAndroid = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -59,6 +61,9 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 
+
+androidx-material3-window-size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3WindowSizeClass" }
+androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" }
 
 [bundles]
 compose = [

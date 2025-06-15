@@ -78,6 +78,10 @@ dependencies {
     // Logging
     implementation(libs.timber)
 
+    // Window size classes for responsive design
+    implementation(libs.androidx.material3.window.size)
+    implementation(libs.androidx.adaptive.android)
+
     // Test dependencies
     testImplementation(libs.junit)
     debugImplementation(libs.bundles.compose.debug)
