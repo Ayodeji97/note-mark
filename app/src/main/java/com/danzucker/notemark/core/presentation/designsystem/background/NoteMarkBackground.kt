@@ -1,8 +1,6 @@
 package com.danzucker.notemark.core.presentation.designsystem.background
 
-import android.graphics.Color
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,24 +12,37 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.cornerRadiusMediumLarge20
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 
 
 @Composable
 fun NoteMarkBackground(
     modifier: Modifier = Modifier,
+    topStartCornerRadius: Dp = cornerRadiusMediumLarge20,
+    topEndCornerRadius: Dp = cornerRadiusMediumLarge20,
+    bottomStartCornerRadius: Dp = 0.dp,
+    bottomEndCornerRadius: Dp = 0.dp,
+    topPadding: Dp = paddingExtraLarge32,
+    bottomPadding: Dp = paddingExtraLarge40,
+    horizontalStartPadding: Dp = paddingMedium16,
+    horizontalEndPadding: Dp = paddingMedium16,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
         color = MaterialTheme.colorScheme.onPrimary,
         shape = RoundedCornerShape(
-            topStart = cornerRadiusMediumLarge20,
-            topEnd = cornerRadiusMediumLarge20
+            topStart = topStartCornerRadius,
+            topEnd = topEndCornerRadius,
+            bottomStart = bottomStartCornerRadius,
+            bottomEnd = bottomEndCornerRadius
         ),
         modifier = modifier
             .fillMaxWidth()
@@ -41,10 +52,10 @@ fun NoteMarkBackground(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = 32.dp,
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 40.dp
+                    top = topPadding,
+                    start = horizontalStartPadding,
+                    end = horizontalEndPadding,
+                    bottom = bottomPadding
                 )
         ) {
             content()

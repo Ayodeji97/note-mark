@@ -63,6 +63,7 @@ dependencies {
     // Database - Room
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
+//    implementation(libs.androidx.material3.window.size.class. android)
     ksp(libs.room.compiler)
 
     // DI - Koin
@@ -77,6 +78,10 @@ dependencies {
 
     // Logging
     implementation(libs.timber)
+
+    // Window size classes for responsive design
+    implementation(libs.androidx.material3.window.size)
+    implementation(libs.androidx.adaptive.android)
 
     // Test dependencies
     testImplementation(libs.junit)

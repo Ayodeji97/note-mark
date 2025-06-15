@@ -15,6 +15,7 @@ private val LightColorScheme = lightColorScheme(
     onSurface = NoteMarkOnSurfaceBlack,
     onSurfaceVariant = NoteMarkOnSurfaceVariantBlack,
     inverseSurface = NoteMarkSurfaceVariantBlack12,
+    background = NoteMarkBackgroundColor,
     error = NoteMarkError,
     errorContainer = NoteMarkError
 )
