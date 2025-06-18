@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.auth.presentation.landing.LandingScreen
-import com.danzucker.notemark.auth.presentation.landing.PortraitLandingRoot
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 
 class MainActivity : ComponentActivity() {
