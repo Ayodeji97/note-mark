@@ -32,8 +32,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmallMedium12
 
-// Structure of the compose
-// Box -> NoteMarkBackground -> Row -> Column -> Column
+
 @Composable
 fun LandscapeLoginScreen(
     modifier: Modifier = Modifier

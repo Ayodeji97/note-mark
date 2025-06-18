@@ -48,7 +48,6 @@ fun NoteMarkBackground(
         ),
         modifier = modifier
             .fillMaxWidth()
-           // .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier

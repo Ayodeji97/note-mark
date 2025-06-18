@@ -31,8 +31,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
 
-// Structure for the PortraitLoginScreen
-// Box (background) -> NoteMarkBackground
+
 @Composable
 fun PortraitLoginScreen(
     modifier: Modifier = Modifier
