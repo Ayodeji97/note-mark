@@ -29,6 +29,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge60
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmallMedium12
+import com.danzucker.notemark.core.presentation.util.screensize.TabletPortrait
 
 
 @Composable
@@ -105,7 +106,7 @@ fun TabletPortraitLandingScreen(
 }
 
 
-@Preview
+@TabletPortrait
 @Composable
 private fun TabletPortraitLandingScreenPreview() {
     NoteMarkTheme {

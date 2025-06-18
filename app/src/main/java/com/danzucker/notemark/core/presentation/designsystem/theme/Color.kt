@@ -11,5 +11,6 @@ val NoteMarkOnSurfaceBlack = Color(0xFF1B1B1C)
 val NoteMarkOnSurfaceVariantBlack = Color(0xFF535364)
 val NoteMarkSurfaceVariantBlack12 = Color(0x1F1B1B1C)
 val NoteMarkBackgroundColor = Color(0xFFE0EAFF)
+val NoteMarkOnSurfaceLowest = Color(0xFFFFFFFF)
 
 val NoteMarkError = Color(0xFFE1294B)

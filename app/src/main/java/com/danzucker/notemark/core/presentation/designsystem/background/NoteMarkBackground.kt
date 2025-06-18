@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -34,6 +35,7 @@ fun NoteMarkBackground(
     bottomPadding: Dp = paddingExtraLarge40,
     horizontalStartPadding: Dp = paddingMedium16,
     horizontalEndPadding: Dp = paddingMedium16,
+    centerContent: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Surface(
@@ -46,7 +48,6 @@ fun NoteMarkBackground(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
     ) {
         Column(
             modifier = Modifier
@@ -56,7 +57,12 @@ fun NoteMarkBackground(
                     start = horizontalStartPadding,
                     end = horizontalEndPadding,
                     bottom = bottomPadding
-                )
+                ),
+            horizontalAlignment = if (centerContent) {
+                Alignment.CenterHorizontally
+            } else {
+                Alignment.Start
+            }
         ) {
             content()
         }
