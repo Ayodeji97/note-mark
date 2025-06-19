@@ -19,4 +19,12 @@
     <string name="username_placeholder">John.doe</string>
     <string name="already_have_account">Already have an account?</string>
     <string name="create_account">Create account</string>
+    <string name="username_supporting_text">Use between 3 and 20 characters for your username</string>
+    <string name="email_supporting_text">Use a valid email address</string>
+    <string name="password_supporting_text">Use 8+ characters with a number or symbol for better security</string>
+    <string name="empty_string" />
+    <string name="username_error_supporting_text">Username must be at least 3 characters</string>
+    <string name="email_error_supporting_text">Invalid email provided</string>
+    <string name="password_error_supporting_text">Password must be at least 8 characters and include a number or symbol</string>
+    <string name="confirm_password_error_supporting_text">Passwords do not match</string>
 </resources>

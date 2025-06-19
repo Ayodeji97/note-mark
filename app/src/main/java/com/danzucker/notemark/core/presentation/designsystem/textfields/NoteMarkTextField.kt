@@ -60,7 +60,7 @@ fun NoteMarkTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val currentSupportingText =  when {
-        isError && !isFocused -> errorSupportingText ?: stringResource(R.string.error_occurred)
+        isError && !isFocused && text.isNotBlank() -> errorSupportingText ?: stringResource(R.string.error_occurred)
         isFocused -> supportingText
         else -> null
     }
@@ -109,7 +109,7 @@ fun NoteMarkTextField(
                     }
                 }
             },
-            isError = isError && !isFocused,
+            isError = isError && !isFocused && text.isNotBlank(),
             visualTransformation = if (isPassword && !passwordVisible) {
                 PasswordVisualTransformation(mask = '*')
             } else {

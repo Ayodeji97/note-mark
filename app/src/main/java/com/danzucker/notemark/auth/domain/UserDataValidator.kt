@@ -4,25 +4,25 @@ class UserDataValidator(
     private val patternValidator: PatternValidator
 ) {
 
+    fun isValidUsername(username: String): Boolean {
+        return username.isNotBlank() && username.length in 3..20
+    }
+
     fun isValidEmail(email: String): Boolean {
         return patternValidator.matches(email.trim())
     }
 
-    fun validatePassword(password: String): PasswordValidationState {
+    fun validatePassword(password: String, confirmPassword: String = ""): PasswordValidationState {
         val hasMinLength = password.length >= MIN_PASSWORD_LENGTH
         val hasDigit = password.any { it.isDigit() }
         val hasSpecialChar = password.contains(Regex("[^A-Za-z0-9]"))
+        val hasValidConfirmPassword = password == confirmPassword
 
         return PasswordValidationState(
             hasMinLength = hasMinLength,
             hasNumber = hasDigit,
             hasSpecialCharacter = hasSpecialChar,
-        )
-    }
-
-    fun validateConfirmPassword(password: String, confirmPassword: String): PasswordValidationState {
-        return PasswordValidationState(
-            hasValidConfirmPassword = password == confirmPassword
+            hasValidConfirmPassword = hasValidConfirmPassword
         )
     }
 

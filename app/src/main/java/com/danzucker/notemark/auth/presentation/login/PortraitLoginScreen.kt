@@ -30,7 +30,6 @@ import com.danzucker.notemark.core.presentation.designsystem.background.NoteMark
 import com.danzucker.notemark.core.presentation.designsystem.buttons.PrimaryButton
 import com.danzucker.notemark.core.presentation.designsystem.textfields.NoteMarkTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingLarge24
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16

@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.R
 import com.danzucker.notemark.auth.presentation.login.LoginState
 import com.danzucker.notemark.auth.presentation.login.TabletLoginScreen
@@ -28,7 +27,6 @@ import com.danzucker.notemark.core.presentation.designsystem.buttons.PrimaryButt
 import com.danzucker.notemark.core.presentation.designsystem.textfields.NoteMarkTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge100
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingLarge24
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16

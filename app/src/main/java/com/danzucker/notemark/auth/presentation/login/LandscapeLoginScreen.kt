@@ -35,7 +35,6 @@ import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge60
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmallMedium12
 
 
 @Composable

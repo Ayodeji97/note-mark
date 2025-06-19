@@ -60,7 +60,7 @@ class LoginViewModel(
                     email = email.trim(),
                     password = password,
                     canLogin = userDataValidator.isValidEmail(email.trim()) &&
-                            userDataValidator.validatePassword(password).isValidPassword,
+                            userDataValidator.validatePassword(password = password).isValidPassword,
                 )
             }
         }.launchIn(viewModelScope)

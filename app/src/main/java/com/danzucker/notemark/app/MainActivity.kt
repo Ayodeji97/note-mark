@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.auth.presentation.landing.LandingScreen
 import com.danzucker.notemark.auth.presentation.login.LoginRoot
+import com.danzucker.notemark.auth.presentation.register.RegisterRoot
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
 //                        onLoginInClick = {},
 //                        modifier = Modifier.padding(innerPadding)
 //                    )
-                    LoginRoot(
+                    RegisterRoot(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
