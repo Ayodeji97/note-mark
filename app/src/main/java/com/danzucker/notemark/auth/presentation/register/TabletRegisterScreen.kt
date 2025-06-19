@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.R
+import com.danzucker.notemark.auth.presentation.login.LoginState
 import com.danzucker.notemark.auth.presentation.login.TabletLoginScreen
 import com.danzucker.notemark.core.presentation.designsystem.background.NoteMarkBackground
 import com.danzucker.notemark.core.presentation.designsystem.buttons.PrimaryButton
@@ -30,6 +31,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingLarge24
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall8
 import com.danzucker.notemark.core.presentation.util.screensize.TabletPortrait
@@ -50,7 +52,7 @@ fun TabletRegisterScreen(
                 .padding(
                     top = WindowInsets.statusBars
                         .asPaddingValues()
-                        .calculateTopPadding() + paddingExtraLarge32,
+                        .calculateTopPadding() + paddingMedium16,
                 )
                 .verticalScroll(rememberScrollState()),
             centerContent = true,
@@ -164,6 +166,8 @@ fun TabletRegisterScreen(
 private fun TabletRegisterScreenPreview() {
     NoteMarkTheme {
         TabletLoginScreen(
+            state = LoginState(),
+            onAction = {},
             modifier = Modifier
                 .fillMaxSize()
         )

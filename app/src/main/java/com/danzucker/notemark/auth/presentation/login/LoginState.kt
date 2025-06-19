@@ -1,6 +1,9 @@
 package com.danzucker.notemark.auth.presentation.login
 
 data class LoginState(
-    val paramOne: String = "default",
-    val paramTwo: List<String> = emptyList(),
+    val email: String = "",
+    val password: String = "",
+    val isPasswordVisible: Boolean = false,
+    val canLogin: Boolean = false,
+    val isLoggingIn: Boolean = false
 )

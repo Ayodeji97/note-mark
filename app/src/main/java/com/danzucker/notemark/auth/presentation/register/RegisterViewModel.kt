@@ -30,5 +30,4 @@ class RegisterViewModel : ViewModel() {
             else -> TODO("Handle actions")
         }
     }
-
 }
