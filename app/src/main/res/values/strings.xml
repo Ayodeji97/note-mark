@@ -22,7 +22,7 @@
     <string name="username_supporting_text">Use between 3 and 20 characters for your username</string>
     <string name="email_supporting_text">Use a valid email address</string>
     <string name="password_supporting_text">Use 8+ characters with a number or symbol for better security</string>
-    <string name="empty_string" />
+    <string name="empty_string">""</string>
     <string name="username_error_minimum_characters_supporting_text">Username must be at least 3 characters</string>
     <string name="username_error_maximum_characters_supporting_text">Username can’t be longer than 20 characters</string>
     <string name="email_error_supporting_text">Invalid email provided</string>

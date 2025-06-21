@@ -24,8 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import com.danzucker.notemark.R
-import com.danzucker.notemark.auth.presentation.login.LoginState
-import com.danzucker.notemark.auth.presentation.login.TabletLoginScreen
 import com.danzucker.notemark.core.presentation.designsystem.background.NoteMarkBackground
 import com.danzucker.notemark.core.presentation.designsystem.buttons.PrimaryButton
 import com.danzucker.notemark.core.presentation.designsystem.textfields.NoteMarkTextField
@@ -195,8 +193,8 @@ fun TabletRegisterScreen(
 @Composable
 private fun TabletRegisterScreenPreview() {
     NoteMarkTheme {
-        TabletLoginScreen(
-            state = LoginState(),
+        TabletRegisterScreen(
+            state = RegisterState(),
             onAction = {},
             modifier = Modifier
                 .fillMaxSize()

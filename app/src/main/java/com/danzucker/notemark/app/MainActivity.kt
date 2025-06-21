@@ -23,11 +23,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteMarkTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    LandingScreen(
-//                        onGetStartedClick = {},
-//                        onLoginInClick = {},
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
                     RegisterRoot(
                         modifier = Modifier.padding(innerPadding)
                     )

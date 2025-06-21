@@ -4,10 +4,6 @@ class UserDataValidator(
     private val patternValidator: PatternValidator
 ) {
 
-    fun isValidUsername(username: String): Boolean {
-        return username.isNotBlank() && username.length in 3..20
-    }
-
     fun validateUsername(username: String): UsernameValidationState {
         val hasLessThanThreeCharacters = username.length < 3
         val hasMoreThanTwentyCharacters = username.length > 20
