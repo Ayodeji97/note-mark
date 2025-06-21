@@ -1,18 +1,13 @@
 package com.danzucker.notemark.core.presentation.designsystem.textfields
 
-import android.graphics.drawable.shapes.Shape
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -21,7 +16,6 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -41,6 +35,7 @@ import com.danzucker.notemark.core.presentation.designsystem.EyeOpenedIcon
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.cornerRadiusSmallMedium12
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall7
+
 
 @Composable
 fun NoteMarkTextField(
@@ -65,13 +60,14 @@ fun NoteMarkTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val currentSupportingText =  when {
-        isError && !isFocused -> errorSupportingText ?: stringResource(R.string.error_occurred)
+        isError && !isFocused && text.isNotBlank() -> errorSupportingText ?: stringResource(R.string.error_occurred)
         isFocused -> supportingText
         else -> null
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         if (!label.isNullOrEmpty()) {
             Text(
@@ -110,11 +106,12 @@ fun NoteMarkTextField(
                             } else {
                                 stringResource(R.string.hide_password)
                             },
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             },
-            isError = isError && !isFocused,
+            isError = isError && !isFocused && text.isNotBlank(),
             visualTransformation = if (isPassword && !passwordVisible) {
                 PasswordVisualTransformation(mask = '*')
             } else {

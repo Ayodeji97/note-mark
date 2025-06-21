@@ -1,12 +1,14 @@
 package com.danzucker.notemark.auth.presentation.register
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
@@ -16,29 +18,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.R
-import com.danzucker.notemark.auth.presentation.login.TabletLoginScreen
 import com.danzucker.notemark.core.presentation.designsystem.background.NoteMarkBackground
 import com.danzucker.notemark.core.presentation.designsystem.buttons.PrimaryButton
 import com.danzucker.notemark.core.presentation.designsystem.textfields.NoteMarkTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge100
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingLarge24
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall8
 import com.danzucker.notemark.core.presentation.util.screensize.TabletPortrait
 
 @Composable
 fun TabletRegisterScreen(
+    state: RegisterState,
+    onAction: (RegisterAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
+    val focusManager = LocalFocusManager.current
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -50,9 +55,10 @@ fun TabletRegisterScreen(
                 .padding(
                     top = WindowInsets.statusBars
                         .asPaddingValues()
-                        .calculateTopPadding() + paddingExtraLarge32,
+                        .calculateTopPadding() + paddingMedium16,
                 )
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
             centerContent = true,
             topPadding = paddingExtraLarge100,
             horizontalStartPadding = paddingExtraLarge100,
@@ -74,76 +80,96 @@ fun TabletRegisterScreen(
             Spacer(modifier = Modifier.height(paddingExtraLarge40))
 
             NoteMarkTextField(
-                text = "",
-                onValueChange = {},
+                text = state.username,
+                onValueChange = {
+                    onAction(RegisterAction.OnUsernameTextChange(it))
+                },
                 modifier = Modifier,
                 label = stringResource(R.string.username),
                 placeholder = stringResource(R.string.username_placeholder),
-                isError = false, // Change latter
+                supportingText = stringResource(R.string.username_supporting_text),
+                errorSupportingText = if (state.usernameValidationState.hasLessThanThreeCharacters) {
+                    stringResource(R.string.username_error_minimum_characters_supporting_text)
+                } else {
+                    stringResource(R.string.username_error_maximum_characters_supporting_text)
+                },
+                isError = !state.usernameValidationState.hasValidCharacters,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
                 onImeAction = {
-
+                    focusManager.moveFocus(FocusDirection.Down)
                 }
             )
 
             Spacer(modifier = Modifier.height(paddingSmall8))
 
             NoteMarkTextField(
-                text = "",
-                onValueChange = {},
+                text = state.email,
+                onValueChange = {
+                    onAction(RegisterAction.OnEmailTextChange(it))
+                },
                 modifier = Modifier,
                 label = stringResource(R.string.email),
                 placeholder = stringResource(R.string.email_placeholder),
-                isError = false, // Change latter
+                errorSupportingText = stringResource(R.string.email_error_supporting_text),
+                isError = !state.isEmailValid,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
                 onImeAction = {
-
+                    focusManager.moveFocus(FocusDirection.Down)
                 }
             )
 
             Spacer(modifier = Modifier.height(paddingSmall8))
 
             NoteMarkTextField(
-                text = "",
-                onValueChange = {},
+                text = state.password,
+                onValueChange = {
+                    onAction(RegisterAction.OnPasswordTextChange(it))
+                },
                 modifier = Modifier,
                 isPassword = true,
                 label = stringResource(R.string.password),
                 placeholder = stringResource(R.string.password_placeholder),
-                isError = false, // Change latter
-                keyboardType = KeyboardType.Email,
+                supportingText = stringResource(R.string.password_supporting_text),
+                errorSupportingText = stringResource(R.string.password_error_supporting_text),
+                isError = !state.passwordValidationState.isValidPassword,
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next,
                 onImeAction = {
-
+                    focusManager.moveFocus(FocusDirection.Down)
                 }
             )
 
             Spacer(modifier = Modifier.height(paddingSmall8))
 
             NoteMarkTextField(
-                text = "",
-                onValueChange = {},
+                text = state.confirmPassword,
+                onValueChange = {
+                    onAction(RegisterAction.OnConfirmPasswordTextChange(it))
+                },
                 modifier = Modifier,
                 label = stringResource(R.string.reset_password),
                 isPassword = true,
                 placeholder = stringResource(R.string.password_placeholder),
-                isError = false, // Change latter
+                errorSupportingText = stringResource(R.string.confirm_password_error_supporting_text),
+                isError = !state.passwordValidationState.hasValidConfirmPassword,
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
                 onImeAction = {
-
+                    onAction(RegisterAction.OnRegisterClick)
                 }
             )
 
             Spacer(modifier = Modifier.height(paddingLarge24))
 
             PrimaryButton(
-                text = stringResource(R.string.login),
-                onClick = { /* Handle login click */ },
-                isLoading = false,
-                enabled = true, // Change latter
+                text = stringResource(R.string.create_account),
+                onClick = {
+                    onAction(RegisterAction.OnRegisterClick)
+                },
+                isLoading = state.isRegistering,
+                enabled = state.canRegister,
             )
 
             Spacer(modifier = Modifier.height(paddingLarge24))
@@ -152,7 +178,11 @@ fun TabletRegisterScreen(
                 text = stringResource(R.string.already_have_account),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .clickable {
+                        onAction(RegisterAction.OnLoginTextClick)
+                    }
             )
         }
     }
@@ -163,7 +193,9 @@ fun TabletRegisterScreen(
 @Composable
 private fun TabletRegisterScreenPreview() {
     NoteMarkTheme {
-        TabletLoginScreen(
+        TabletRegisterScreen(
+            state = RegisterState(),
+            onAction = {},
             modifier = Modifier
                 .fillMaxSize()
         )
