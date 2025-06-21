@@ -56,7 +56,7 @@ class RegisterViewModel(
 
     private fun observeRegister() {
         combine(username, email, password, confirmPassword) { username, email, password, confirmPassword ->
-            val isUsernameValid = userDataValidator.isValidUsername(username.trim())
+            val usernameValidationState = userDataValidator.validateUsername(username.trim())
             val isEmailValid = userDataValidator.isValidEmail(email.trim())
             val passwordValidationState = userDataValidator.validatePassword(password, confirmPassword)
 
@@ -67,9 +67,9 @@ class RegisterViewModel(
                     password = password,
                     confirmPassword = confirmPassword,
                     isEmailValid = isEmailValid,
-                    isUsernameValid = isUsernameValid,
-                    isPasswordValid = passwordValidationState.isValidPassword,
-                    canRegister = isUsernameValid &&
+                    passwordValidationState = passwordValidationState,
+                    usernameValidationState = usernameValidationState,
+                    canRegister = usernameValidationState.hasValidCharacters &&
                             isEmailValid &&
                             passwordValidationState.isValidPassword &&
                             passwordValidationState.hasValidConfirmPassword

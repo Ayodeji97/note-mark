@@ -8,6 +8,18 @@ class UserDataValidator(
         return username.isNotBlank() && username.length in 3..20
     }
 
+    fun validateUsername(username: String): UsernameValidationState {
+        val hasLessThanThreeCharacters = username.length < 3
+        val hasMoreThanTwentyCharacters = username.length > 20
+        val hasValidCharacters = username.isNotBlank() && username.length in 3..20
+
+        return UsernameValidationState(
+            hasLessThanThreeCharacters = hasLessThanThreeCharacters,
+            hasMoreThanTwentyCharacters = hasMoreThanTwentyCharacters,
+            hasValidCharacters = hasValidCharacters
+        )
+    }
+
     fun isValidEmail(email: String): Boolean {
         return patternValidator.matches(email.trim())
     }

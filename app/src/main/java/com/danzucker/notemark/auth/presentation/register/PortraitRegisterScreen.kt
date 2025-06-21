@@ -32,8 +32,9 @@ import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge32
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingExtraLarge40
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingLarge24
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall6
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingSmall8
+
 
 @Composable
 fun PortraitRegisterScreen(
@@ -83,8 +84,12 @@ fun PortraitRegisterScreen(
                 label = stringResource(R.string.username),
                 placeholder = stringResource(R.string.username_placeholder),
                 supportingText = stringResource(R.string.username_supporting_text),
-                errorSupportingText = stringResource(R.string.username_error_supporting_text),
-                isError = !state.isUsernameValid,
+                errorSupportingText = if (state.usernameValidationState.hasLessThanThreeCharacters) {
+                    stringResource(R.string.username_error_minimum_characters_supporting_text)
+                } else {
+                    stringResource(R.string.username_error_maximum_characters_supporting_text)
+                },
+                isError = !state.usernameValidationState.hasValidCharacters,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
                 onImeAction = {
@@ -92,7 +97,7 @@ fun PortraitRegisterScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(paddingSmall8))
+            Spacer(modifier = Modifier.height(paddingMedium16))
 
             NoteMarkTextField(
                 text = state.email,
@@ -103,7 +108,7 @@ fun PortraitRegisterScreen(
                 label = stringResource(R.string.email),
                 placeholder = stringResource(R.string.email_placeholder),
                 errorSupportingText = stringResource(R.string.email_error_supporting_text),
-                isError = !state.isEmailValid, // Change latter
+                isError = !state.isEmailValid,
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
                 onImeAction = {
@@ -111,7 +116,7 @@ fun PortraitRegisterScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(paddingSmall8))
+            Spacer(modifier = Modifier.height(paddingMedium16))
 
             NoteMarkTextField(
                 text = state.password,
@@ -124,15 +129,15 @@ fun PortraitRegisterScreen(
                 placeholder = stringResource(R.string.password_placeholder),
                 supportingText = stringResource(R.string.password_supporting_text),
                 errorSupportingText = stringResource(R.string.password_error_supporting_text),
-                isError = !state.isPasswordValid,
-                keyboardType = KeyboardType.Email,
+                isError = !state.passwordValidationState.isValidPassword,
+                keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next,
                 onImeAction = {
                     focusManager.moveFocus(FocusDirection.Down)
                 }
             )
 
-            Spacer(modifier = Modifier.height(paddingSmall8))
+            Spacer(modifier = Modifier.height(paddingMedium16))
 
             NoteMarkTextField(
                 text = state.confirmPassword,
@@ -175,7 +180,6 @@ fun PortraitRegisterScreen(
                         onAction(RegisterAction.OnLoginTextClick)
                     }
             )
-
         }
     }
 }

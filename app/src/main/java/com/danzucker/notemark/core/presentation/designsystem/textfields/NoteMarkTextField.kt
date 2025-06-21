@@ -66,7 +66,8 @@ fun NoteMarkTextField(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         if (!label.isNullOrEmpty()) {
             Text(
@@ -105,6 +106,7 @@ fun NoteMarkTextField(
                             } else {
                                 stringResource(R.string.hide_password)
                             },
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

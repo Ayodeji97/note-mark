@@ -1,5 +1,8 @@
 package com.danzucker.notemark.auth.presentation.register
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +34,8 @@ fun RegisterRoot(
 
     RegisterScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        modifier = Modifier
     )
 }
 
@@ -39,6 +43,7 @@ fun RegisterRoot(
 fun RegisterScreen(
     state: RegisterState,
     onAction: (RegisterAction) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     val windowClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -47,20 +52,36 @@ fun RegisterScreen(
             PortraitRegisterScreen(
                 state = state,
                 onAction = onAction,
-                modifier = Modifier
+                modifier = modifier
             )
         }
         DeviceScreenType.MOBILE_LANDSCAPE -> {
-            LandscapeRegisterScreen()
+            LandscapeRegisterScreen(
+                state = state,
+                onAction = onAction,
+                modifier = modifier
+            )
         }
         DeviceScreenType.TABLET_PORTRAIT -> {
-            TabletRegisterScreen()
+            TabletRegisterScreen(
+                state = state,
+                onAction = onAction,
+                modifier = modifier
+            )
         }
         DeviceScreenType.TABLET_LANDSCAPE -> {
-            LandscapeRegisterScreen()
+            LandscapeRegisterScreen(
+                state = state,
+                onAction = onAction,
+                modifier = modifier
+            )
         }
         DeviceScreenType.DESKTOP -> {
-            TabletRegisterScreen()
+            TabletRegisterScreen(
+                state = state,
+                onAction = onAction,
+                modifier = modifier
+            )
         }
     }
 }
@@ -71,7 +92,8 @@ private fun Preview() {
     NoteMarkTheme {
         RegisterScreen(
             state = RegisterState(),
-            onAction = {}
+            onAction = {},
+            modifier = Modifier
         )
     }
 }
