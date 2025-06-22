@@ -2,6 +2,7 @@ package com.danzucker.notemark.auth.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.danzucker.notemark.auth.data.NoteAuthRepository
 import com.danzucker.notemark.auth.domain.UserDataValidator
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +14,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.danzucker.notemark.core.domain.util.Result
 
 class RegisterViewModel(
+    private val noteAuthRepository: NoteAuthRepository,
     private val userDataValidator: UserDataValidator
 ) : ViewModel() {
 
@@ -55,10 +58,16 @@ class RegisterViewModel(
     }
 
     private fun observeRegister() {
-        combine(username, email, password, confirmPassword) { username, email, password, confirmPassword ->
+        combine(
+            username,
+            email,
+            password,
+            confirmPassword
+        ) { username, email, password, confirmPassword ->
             val usernameValidationState = userDataValidator.validateUsername(username.trim())
             val isEmailValid = userDataValidator.isValidEmail(email.trim())
-            val passwordValidationState = userDataValidator.validatePassword(password, confirmPassword)
+            val passwordValidationState =
+                userDataValidator.validatePassword(password, confirmPassword)
 
             _state.update {
                 it.copy(
@@ -78,7 +87,26 @@ class RegisterViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun onRegister() {}
+    private fun onRegister() {
+        viewModelScope.launch {
+            _state.update { it.copy(isRegistering = true) }
+            val result = noteAuthRepository.register(
+                username = _state.value.username,
+                email = _state.value.email,
+                password = _state.value.password
+            )
+            _state.update { it.copy(isRegistering = false) }
+
+            when (result) {
+//                is Result.Error -> {
+//                    eventChannel.send(RegisterEvent.OnError(result.error.asUiText()))
+//                }
+//                is Result.Success -> {
+//                    eventChannel.send(RegisterEvent.RegisterSuccess)
+//                }
+            }
+        }
+    }
 
     private fun onLoginTextClick() = viewModelScope.launch {
         eventChannel.send(RegisterEvent.OnLoginTextClick)
@@ -119,26 +147,4 @@ class RegisterViewModel(
         }
         confirmPassword.update { text }
     }
-
-//    fun getSupportingText(field: Field): UiText {
-//       return when (field) {
-//            USERNAME -> UiText.StringResourceWithArgs(R.string.username_supporting_text)
-//            EMAIL -> {
-//                UiText.StringResourceWithArgs(R.string.empty_string) // no supporting text
-//            }
-//            PASSWORD -> {
-//                UiText.StringResourceWithArgs(R.string.password_supporting_text)
-//            }
-//            CONFIRM_PASSWORD -> {
-//                UiText.StringResourceWithArgs(R.string.empty_string) // no supporting text
-//            }
-//        }
-//    }
-}
-
-enum class Field {
-    USERNAME,
-    EMAIL,
-    PASSWORD,
-    CONFIRM_PASSWORD
 }
