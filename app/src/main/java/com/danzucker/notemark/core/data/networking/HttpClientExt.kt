@@ -1,4 +1,4 @@
-package com.danzucker.notemark.core.data
+package com.danzucker.notemark.core.data.networking
 
 import com.danzucker.notemark.BuildConfig
 import com.danzucker.notemark.core.domain.util.DataError

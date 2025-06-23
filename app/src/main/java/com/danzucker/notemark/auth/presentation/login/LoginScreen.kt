@@ -24,7 +24,8 @@ fun LoginRoot(
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
             LoginEvent.OnRegisterTextClick -> Unit // navigate to registration screen
-
+            is LoginEvent.Error -> Unit
+            LoginEvent.LoginSuccess -> Unit
         }
     }
 

@@ -24,6 +24,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://notemark.pl-coding.com\"")
+            buildConfigField("String", "X_User_Email", "\"danielayodejiola@gmail.com\"")
         }
         release {
             isMinifyEnabled = false
@@ -32,6 +33,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "BASE_URL", "\"https://notemark.pl-coding.com\"")
+            buildConfigField("String", "X_User_Email", "\"danielayodejiola@gmail.com\"")
         }
     }
     compileOptions {

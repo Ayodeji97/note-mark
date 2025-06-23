@@ -2,7 +2,7 @@ package com.danzucker.notemark.auth.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.danzucker.notemark.auth.data.NoteAuthRepository
+import com.danzucker.notemark.auth.domain.AuthRepository
 import com.danzucker.notemark.auth.domain.UserDataValidator
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.danzucker.notemark.core.domain.util.Result
+import com.danzucker.notemark.core.presentation.util.asUiText
 
 class RegisterViewModel(
-    private val noteAuthRepository: NoteAuthRepository,
+    private val noteAuthRepository: AuthRepository,
     private val userDataValidator: UserDataValidator
 ) : ViewModel() {
 
@@ -98,12 +99,13 @@ class RegisterViewModel(
             _state.update { it.copy(isRegistering = false) }
 
             when (result) {
-//                is Result.Error -> {
-//                    eventChannel.send(RegisterEvent.OnError(result.error.asUiText()))
-//                }
-//                is Result.Success -> {
-//                    eventChannel.send(RegisterEvent.RegisterSuccess)
-//                }
+                is Result.Success -> {
+                    eventChannel.send(RegisterEvent.RegistrationSuccess)
+                }
+
+                is Result.Error -> {
+                    eventChannel.send(RegisterEvent.Error(result.error.asUiText()))
+                }
             }
         }
     }

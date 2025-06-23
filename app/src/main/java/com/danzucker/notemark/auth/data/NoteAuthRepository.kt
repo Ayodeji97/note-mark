@@ -1,7 +1,7 @@
 package com.danzucker.notemark.auth.data
 
 import com.danzucker.notemark.auth.domain.AuthRepository
-import com.danzucker.notemark.core.data.post
+import com.danzucker.notemark.core.data.networking.post
 import com.danzucker.notemark.core.domain.model.AuthInformation
 import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
 import com.danzucker.notemark.core.domain.util.DataError

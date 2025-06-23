@@ -28,7 +28,16 @@ fun RegisterRoot(
     val context = LocalContext.current
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            RegisterEvent.OnLoginTextClick -> Unit  // navigate to registration screen
+            RegisterEvent.OnLoginTextClick ->{
+                println("Navigating to Login Screen")
+            }
+            is RegisterEvent.Error -> {
+                println("Error: ${event.error.asString(context)}")
+            }
+            RegisterEvent.RegistrationSuccess -> {
+                // Handle successful registration, e.g., navigate to the main screen
+                println("Registration successful")
+            }
         }
     }
 
