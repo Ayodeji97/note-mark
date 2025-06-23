@@ -12,15 +12,6 @@ fun NavigationRoot(
         startDestination = NavigationRoute.Landing,
         modifier = Modifier
     ) {
-        composable<>(NavigationRoute.Landing) {
-            LandingScreenRoot(
-                onLoginClick = {
-                    navController.navigate(NavigationRoute.Login)
-                },
-                onRegisterClick = {
-                    navController.navigate(NavigationRoute.Register)
-                }
-            )
-        }
+
     }
 }
