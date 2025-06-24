@@ -24,7 +24,7 @@ fun NoteMarkLink(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
             .fillMaxWidth()
-            .clickable (onClick = onClick),
+            .clickable(onClick = onClick),
         textAlign = TextAlign.Center,
     )
 }
