@@ -76,7 +76,6 @@ fun LandscapeLoginContent(
         ) {
             NoteMarkHeaderSection(
                 title = stringResource(R.string.login),
-                subtitle = stringResource(R.string.landing_description),
                 modifier = Modifier
                     .weight(1f),
 

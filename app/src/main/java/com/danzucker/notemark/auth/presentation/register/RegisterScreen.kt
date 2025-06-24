@@ -56,36 +56,31 @@ fun RegisterScreen(
         DeviceScreenType.MOBILE_PORTRAIT -> {
             PortraitRegisterScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
         DeviceScreenType.MOBILE_LANDSCAPE -> {
             LandscapeRegisterScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
         DeviceScreenType.TABLET_PORTRAIT -> {
             TabletRegisterScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
         DeviceScreenType.TABLET_LANDSCAPE -> {
             LandscapeRegisterScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
         DeviceScreenType.DESKTOP -> {
             TabletRegisterScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
     }
