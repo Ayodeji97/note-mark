@@ -55,7 +55,7 @@ fun LandscapeLandingScreen(
        Box(
            modifier = Modifier
                 .fillMaxSize()
-               .background(MaterialTheme.colorScheme.background)
+               .background(MaterialTheme.colorScheme.surfaceContainer)
                .weight(1f),
            contentAlignment = Alignment.Center
        ) {
