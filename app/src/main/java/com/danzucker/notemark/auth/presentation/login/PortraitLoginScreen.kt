@@ -130,7 +130,7 @@ fun PortraitLoginContent(
             text = stringResource(R.string.dont_have_an_account),
             onClick = {
                 onAction(LoginAction.OnRegisterTextClick)
-            },
+            }
         )
     }
 }

@@ -18,8 +18,8 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 @Composable
 fun NoteMarkHeaderSection(
     title: String,
-    subtitle: String,
     modifier: Modifier = Modifier,
+    subtitle: String = stringResource(R.string.landing_description),
     shouldCenterContent: Boolean = false,
 ) {
     Column(
