@@ -81,6 +81,7 @@ dependencies {
 
     // Kotlin Serialization for navigation
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.navigation)
 
     // Allow use of java.time.Instant below API 26
     coreLibraryDesugaring(libs.desugar.jdk.libs)

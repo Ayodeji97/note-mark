@@ -6,7 +6,9 @@ sealed interface NavigationRoute {
     @Serializable
     data object Landing : NavigationRoute
     @Serializable
-    data object Login() : NavigationRoute
+    data object Login : NavigationRoute
     @Serializable
-    data object Register() : NavigationRoute
+    data object Register : NavigationRoute
+    @Serializable
+    data object Home : NavigationRoute
 }

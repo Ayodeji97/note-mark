@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.danzucker.notemark.app.navigation.NavigationRoot
 import com.danzucker.notemark.auth.presentation.landing.LandingScreen
 import com.danzucker.notemark.auth.presentation.login.LoginRoot
 import com.danzucker.notemark.auth.presentation.register.RegisterRoot
@@ -22,15 +24,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteMarkTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    RegisterRoot(
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-
-                    LoginRoot(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                NavigationRoot(
+                    navController = rememberNavController(),
+                )
             }
         }
     }
