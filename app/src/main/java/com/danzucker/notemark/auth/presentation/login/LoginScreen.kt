@@ -56,40 +56,35 @@ fun LoginScreen(
         DeviceScreenType.MOBILE_PORTRAIT -> {
             PortraitLoginScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
 
         DeviceScreenType.MOBILE_LANDSCAPE -> {
             LandscapeLoginScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
 
         DeviceScreenType.TABLET_PORTRAIT -> {
             TabletLoginScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
 
         DeviceScreenType.TABLET_LANDSCAPE -> {
             LandscapeLoginScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
 
         DeviceScreenType.DESKTOP -> {
             TabletLoginScreen(
                 state = state,
-                onAction = onAction,
-                modifier = modifier
+                onAction = onAction
             )
         }
     }
