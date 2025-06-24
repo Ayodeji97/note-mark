@@ -4,6 +4,7 @@ import android.app.Application
 import com.danzucker.notemark.BuildConfig
 import com.danzucker.notemark.app.di.appModule
 import com.danzucker.notemark.auth.di.authModule
+import com.danzucker.notemark.core.data.di.coreDataModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,7 +27,8 @@ class NoteMarkApplication : Application() {
             androidContext(this@NoteMarkApplication)
             modules(
                 appModule,
-                authModule
+                authModule,
+                coreDataModule,
             )
         }
     }

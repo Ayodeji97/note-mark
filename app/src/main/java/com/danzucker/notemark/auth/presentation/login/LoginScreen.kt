@@ -1,5 +1,6 @@
 package com.danzucker.notemark.auth.presentation.login
 
+import android.widget.Toast
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,16 +16,24 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginRoot(
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit,
     viewModel: LoginViewModel = koinViewModel(),
-    modifier: Modifier
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            LoginEvent.OnRegisterTextClick -> Unit // navigate to registration screen
-
+            LoginEvent.OnRegisterTextClick -> onNavigateToRegister()
+            is LoginEvent.Error -> {
+                Toast.makeText(
+                    context,
+                    event.error.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            LoginEvent.LoginSuccess -> onLoginSuccess()
         }
     }
 

@@ -35,8 +35,12 @@ fun PrimaryButton(
             .fillMaxWidth(),
         shape = RoundedCornerShape(size = cornerRadiusSmallMedium12),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = if (enabled) {
+            containerColor = if (enabled && !isLoading) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+            },
+            contentColor = if (enabled && !isLoading) {
                 MaterialTheme.colorScheme.onPrimary
             } else {
                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)

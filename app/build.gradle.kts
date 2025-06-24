@@ -22,12 +22,18 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://notemark.pl-coding.com\"")
+            buildConfigField("String", "X_User_Email", "\"danielayodejiola@gmail.com\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "BASE_URL", "\"https://notemark.pl-coding.com\"")
+            buildConfigField("String", "X_User_Email", "\"danielayodejiola@gmail.com\"")
         }
     }
     compileOptions {
@@ -63,6 +69,10 @@ dependencies {
     // Database - Room
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.room.compiler)
 
     // DI - Koin
@@ -71,6 +81,7 @@ dependencies {
 
     // Kotlin Serialization for navigation
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.compose.navigation)
 
     // Allow use of java.time.Instant below API 26
     coreLibraryDesugaring(libs.desugar.jdk.libs)

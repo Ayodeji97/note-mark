@@ -2,7 +2,10 @@ package com.danzucker.notemark.auth.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.danzucker.notemark.auth.domain.AuthRepository
 import com.danzucker.notemark.auth.domain.UserDataValidator
+import com.danzucker.notemark.core.domain.util.Result
+import com.danzucker.notemark.core.presentation.util.asUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
+    private val noteAuthRepository: AuthRepository,
     private val userDataValidator: UserDataValidator
 ) : ViewModel() {
 
@@ -46,7 +50,7 @@ class LoginViewModel(
         when (action) {
             is LoginAction.OnEmailTextChange -> onEmailTextChange(action.text)
             is LoginAction.OnPasswordTextChange -> onPasswordTextChange(action.text)
-            LoginAction.OnLoginClick -> login() // Need to work on this
+            LoginAction.OnLoginClick -> login()
             LoginAction.OnRegisterTextClick -> onRegisterTextClick()
             LoginAction.OnTogglePasswordVisibility -> onToggleVisibility()
         }
@@ -67,9 +71,23 @@ class LoginViewModel(
     }
 
     private fun login() {
-        // Handle login logic here
-        // This could involve calling a repository method to perform the login
-        // and updating the state based on the result.
+        viewModelScope.launch {
+            _state.update { it.copy(isLoggingIn = true) }
+            val result = noteAuthRepository.login(
+                email = _state.value.email.trim(),
+                password = _state.value.password
+            )
+            _state.update { it.copy(isLoggingIn = false) }
+
+            when (result) {
+                is Result.Success -> {
+                    eventChannel.send(LoginEvent.LoginSuccess)
+                }
+                is Result.Error -> {
+                    eventChannel.send(LoginEvent.Error(result.error.asUiText()))
+                }
+            }
+        }
     }
 
     private fun onEmailTextChange(text: String) {
