@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note
+package com.danzucker.notemark.note.notelist
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.danzucker.notemark.R
-import com.danzucker.notemark.core.presentation.designsystem.components.NoteTopAppBar
+import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.note.components.NoteList
@@ -44,13 +44,13 @@ fun NoteScreen(
    Scaffold(
        containerColor = MaterialTheme.colorScheme.surface,
        topBar = {
-           NoteTopAppBar(
+           NoteMarkTopAppBar(
                title = stringResource(id = R.string.app_name),
                actionContent = {
                    ProfileInitials(
                        profileInitials = "DA", // replace later with state.profileInitials,
                        onProfileClick = {
-                           onAction( NoteAction.OnProfileClick)
+                           onAction(NoteAction.OnProfileClick)
                        }
                    )
                }

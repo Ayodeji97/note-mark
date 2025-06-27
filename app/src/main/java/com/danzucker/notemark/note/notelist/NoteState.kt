@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note
+package com.danzucker.notemark.note.notelist
 
 import com.danzucker.notemark.note.models.NoteUi
 

@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note
+package com.danzucker.notemark.note.notelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

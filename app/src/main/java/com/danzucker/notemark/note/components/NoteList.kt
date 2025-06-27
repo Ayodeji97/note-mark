@@ -11,11 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMediumLarge
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMediumLarge20
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
 import com.danzucker.notemark.note.models.NoteUi
@@ -30,9 +28,9 @@ fun NoteList(
     val (columnCount, contentPadding) = when (deviceScreenType) {
         MOBILE_PORTRAIT -> 2 to paddingMedium16
         MOBILE_LANDSCAPE -> 3 to paddingMedium16
-        TABLET_PORTRAIT -> 2 to paddingMediumLarge
-        TABLET_LANDSCAPE -> 3 to  paddingMediumLarge
-        DESKTOP -> 3 to paddingMediumLarge
+        TABLET_PORTRAIT -> 2 to paddingMediumLarge20
+        TABLET_LANDSCAPE -> 3 to  paddingMediumLarge20
+        DESKTOP -> 3 to paddingMediumLarge20
     }
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(columnCount), // Change this base on screen size
