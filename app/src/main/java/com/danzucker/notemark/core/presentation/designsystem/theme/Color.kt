@@ -1,5 +1,7 @@
 package com.danzucker.notemark.core.presentation.designsystem.theme
 
+import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val NoteMarkBlue = Color(0xFF5977F7)
@@ -12,5 +14,17 @@ val NoteMarkOnSurfaceVariantBlack = Color(0xFF535364)
 val NoteMarkSurfaceVariantBlack12 = Color(0x1F1B1B1C)
 val NoteMarkBackgroundColor = Color(0xFFE0EAFF)
 val NoteMarkOnSurfaceLowest = Color(0xFFFFFFFF)
+val NoteMarkGradientLightColor = Color(0xFF58A1F8)
+val NoteMarkGradientSolidColor = Color(0xFF5A4CF7)
 
 val NoteMarkError = Color(0xFFE1294B)
+
+
+
+val ColorScheme.FabGradient: Brush
+    get() = Brush.linearGradient(
+        colors = listOf(
+            NoteMarkGradientLightColor,
+            NoteMarkGradientSolidColor
+        )
+    )

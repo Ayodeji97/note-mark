@@ -1,6 +1,7 @@
 package com.danzucker.notemark.core.presentation.designsystem.values
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 object Dimens {
 
@@ -49,4 +50,19 @@ object Dimens {
     // Stroke widths
     val strokeWidthSmall = 1.dp
     val strokeWidthMedium12 = 2.dp
+
+
+
+    // Font sizes
+    val fontSizeExtraSmall4 = 4.sp
+    val fontSizeSmall6 = 6.sp
+    val fontSizeSmall8 = 8.sp
+    val fontSizeSmallMedium12 = 12.sp
+    val fontSizeMedium16 = 16.sp
+    val fontSizeMediumLarge17 = 17.sp
+    val fontSizeMediumLarge20 = 20.sp
+    val fontSizeLarge24 = 24.sp
+    val fontSizeExtraLarge32 = 32.sp
+    val fontSizeExtraLarge40 = 40.sp
+    val fontSizeExtraLarge48 = 48.sp
 }
