@@ -1,26 +1,25 @@
 package com.danzucker.notemark.note
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
+import com.danzucker.notemark.note.components.NoteList
 import com.danzucker.notemark.note.components.NoteMarkGradientFloatingActionButton
 import com.danzucker.notemark.note.components.ProfileInitials
+import com.danzucker.notemark.note.preview.NotePreviewModel.noteUi
 
 @Composable
 fun NoteRoot(
@@ -39,6 +38,9 @@ fun NoteScreen(
     state: NoteState,
     onAction: (NoteAction) -> Unit,
 ) {
+
+    val windowClass = currentWindowAdaptiveInfo().windowSizeClass
+
    Scaffold(
        containerColor = MaterialTheme.colorScheme.surface,
        topBar = {
@@ -62,18 +64,30 @@ fun NoteScreen(
            )
        }
    ) { innerPadding ->
-        Box(
-            modifier = Modifier.padding(innerPadding)
+        NoteList(
+            notes = state.notes,
+            deviceScreenType = DeviceScreenType.fromWindowSizeClass(windowClass),
+            modifier = Modifier
+                .padding(innerPadding)
         )
    }
 }
 
 @Preview
 @Composable
-private fun Preview() {
+private fun NoteScreenPreview() {
+    val noteUiPreview = remember {
+        (1..15).map {
+            noteUi.copy(
+                id = it
+            )
+        }
+    }
     NoteMarkTheme {
         NoteScreen(
-            state = NoteState(),
+            state = NoteState(
+                notes = noteUiPreview
+            ),
             onAction = {}
         )
     }

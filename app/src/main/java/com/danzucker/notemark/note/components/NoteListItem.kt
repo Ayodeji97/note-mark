@@ -20,8 +20,8 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.note.models.NoteUi
 
 @Composable
-fun NoteCard(
-    note: NoteUi,
+fun NoteListItem(
+    noteUi: NoteUi,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -33,13 +33,12 @@ fun NoteCard(
         tonalElevation = elevationLarge
     ) {
         Column(
-            modifier = Modifier
-                .padding(paddingMedium16),
+            modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(paddingExtraSmall4)
         ) {
 
             Text(
-                text = note.createdAt,
+                text = noteUi.createdAt,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -47,12 +46,12 @@ fun NoteCard(
             Spacer(modifier = Modifier.height(paddingExtraSmall4))
 
             Text(
-                text = note.title,
+                text = noteUi.title,
                 style = MaterialTheme.typography.titleLarge,
             )
 
             Text(
-                text = note.content,
+                text = noteUi.content,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -64,8 +63,8 @@ fun NoteCard(
 @Composable
 private fun NoteCardPreview() {
     NoteMarkTheme {
-        NoteCard(
-            note = NoteUi(
+        NoteListItem(
+            noteUi = NoteUi(
                 id = 1,
                 title = "Sample Note",
                 //createdAt = "2023-10-01T12:00:00Z" // I will format this later
