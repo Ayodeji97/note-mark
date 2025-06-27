@@ -15,7 +15,8 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontS
 fun SaveNoteButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 ) {
     TextButton(
         onClick = onClick

@@ -22,7 +22,7 @@ import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontSizeMediumLarge20
 
 @Composable
-fun NoteTopAppBar(
+fun NoteMarkTopAppBar(
     modifier: Modifier = Modifier,
     title: String? = null,
     actionContent: (@Composable () -> Unit)? = null,
@@ -65,7 +65,7 @@ fun NoteTopAppBar(
 @Composable
 private fun NoteTopAppBarPreview() {
     NoteMarkTheme {
-        NoteTopAppBar(
+        NoteMarkTopAppBar(
             title = "NoteMark",
             modifier = Modifier,
             actionContent = {

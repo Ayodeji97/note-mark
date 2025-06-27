@@ -22,7 +22,7 @@ fun TransparentTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String? = null,
-    placeholderColor: Color = MaterialTheme.colorScheme.primary,
+    placeholderColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.onSurfaceVariant
     ),
