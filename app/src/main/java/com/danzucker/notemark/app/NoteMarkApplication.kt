@@ -5,6 +5,8 @@ import com.danzucker.notemark.BuildConfig
 import com.danzucker.notemark.app.di.appModule
 import com.danzucker.notemark.auth.di.authModule
 import com.danzucker.notemark.core.data.di.coreDataModule
+import com.danzucker.notemark.core.database.di.databaseModule
+import com.danzucker.notemark.note.di.noteModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +30,8 @@ class NoteMarkApplication : Application() {
             modules(
                 appModule,
                 authModule,
+                noteModule,
+                databaseModule,
                 coreDataModule,
             )
         }

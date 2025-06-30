@@ -7,7 +7,8 @@ import androidx.navigation.compose.composable
 import com.danzucker.notemark.auth.presentation.landing.LandingScreen
 import com.danzucker.notemark.auth.presentation.login.LoginRoot
 import com.danzucker.notemark.auth.presentation.register.RegisterRoot
-import com.danzucker.notemark.note.notelist.NoteRoot
+import com.danzucker.notemark.note.presentation.createnote.CreateNoteRoot
+import com.danzucker.notemark.note.presentation.notelist.NoteRoot
 
 @Composable
 fun NavigationRoot(
@@ -40,7 +41,7 @@ fun NavigationRoot(
         composable<NavigationRoute.Login> {
             LoginRoot(
                 onLoginSuccess = {
-                    navController.navigate(NavigationRoute.Home) {
+                    navController.navigate(NavigationRoute.Note) {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
@@ -82,8 +83,18 @@ fun NavigationRoot(
             )
         }
 
-        composable<NavigationRoute.Home> {
-            NoteRoot()
+        composable<NavigationRoute.Note> {
+            NoteRoot(
+                onNavigateToCreateNote = {
+                    navController.navigate(NavigationRoute.CreateNote)
+                }
+            )
+        }
+
+        composable<NavigationRoute.CreateNote> {
+            CreateNoteRoot(
+                onNavigateBack = navController::navigateUp
+            )
         }
     }
 }

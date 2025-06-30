@@ -17,7 +17,7 @@ import com.danzucker.notemark.auth.presentation.landing.LandingScreen
 import com.danzucker.notemark.auth.presentation.login.LoginRoot
 import com.danzucker.notemark.auth.presentation.register.RegisterRoot
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.danzucker.notemark.note.createnote.CreateNoteRoot
+import com.danzucker.notemark.note.presentation.createnote.CreateNoteRoot
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,11 +25,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NoteMarkTheme {
-//                NavigationRoot(
-//                    navController = rememberNavController(),
-//                )
-
-                CreateNoteRoot()
+                NavigationRoot(
+                    navController = rememberNavController(),
+                )
             }
         }
     }

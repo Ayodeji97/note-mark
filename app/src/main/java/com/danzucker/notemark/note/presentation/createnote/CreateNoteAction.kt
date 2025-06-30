@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note.createnote
+package com.danzucker.notemark.note.presentation.createnote
 
 sealed interface CreateNoteAction {
     data class OnTitleTextChange(val text: String): CreateNoteAction
