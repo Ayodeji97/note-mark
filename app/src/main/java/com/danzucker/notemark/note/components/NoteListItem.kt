@@ -65,13 +65,14 @@ private fun NoteCardPreview() {
     NoteMarkTheme {
         NoteListItem(
             noteUi = NoteUi(
-                id = 1,
+                id = "1",
                 title = "Sample Note",
                 //createdAt = "2023-10-01T12:00:00Z" // I will format this later
                 createdAt = "19 APR",
                 content = "Augue non mauris ante viverra ut arcu" +
                         " sed ut lectus interdum morbi sed leo" +
                         " purus gravida non id mi augue.",
+                lastEditAt = "19 APR 2023",
             ),
             onClick = {}
         )

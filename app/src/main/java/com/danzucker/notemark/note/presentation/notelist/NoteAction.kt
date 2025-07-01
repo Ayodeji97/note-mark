@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note.notelist
+package com.danzucker.notemark.note.presentation.notelist
 
 sealed interface NoteAction {
     data object OnCreateNoteClick : NoteAction

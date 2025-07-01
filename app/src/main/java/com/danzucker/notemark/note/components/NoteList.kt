@@ -17,7 +17,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddi
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
 import com.danzucker.notemark.note.models.NoteUi
-import com.danzucker.notemark.note.preview.NotePreviewModel.noteUi
+import com.danzucker.notemark.note.presentation.preview.NotePreviewModel.noteUi
 
 @Composable
 fun NoteList(
@@ -60,7 +60,7 @@ private fun NoteListPreview() {
     val noteUiPreview = remember {
         (1..15).map {
             noteUi.copy(
-                id = it
+                id = it.toString()
             )
         }
     }

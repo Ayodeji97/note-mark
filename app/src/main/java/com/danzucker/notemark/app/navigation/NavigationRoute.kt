@@ -10,5 +10,8 @@ sealed interface NavigationRoute {
     @Serializable
     data object Register : NavigationRoute
     @Serializable
-    data object Home : NavigationRoute
+    data object Note : NavigationRoute
+
+    @Serializable
+    data object CreateNote : NavigationRoute
 }

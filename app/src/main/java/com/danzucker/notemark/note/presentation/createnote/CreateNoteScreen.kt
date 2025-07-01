@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note.createnote
+package com.danzucker.notemark.note.presentation.createnote
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -34,13 +35,24 @@ import com.danzucker.notemark.core.presentation.designsystem.components.NoteMark
 import com.danzucker.notemark.core.presentation.designsystem.textfields.TransparentTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMediumLarge20
+import com.danzucker.notemark.core.presentation.util.ObserveAsEvents
 import com.danzucker.notemark.note.components.SaveNoteButton
+import com.danzucker.notemark.note.presentation.notelist.NoteEvent
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CreateNoteRoot(
-    viewModel: CreateNoteViewModel = viewModel()
+    onNavigateBack: () -> Unit,
+    viewModel: CreateNoteViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            CreateNoteEvent.NoteSuccessfullySaved -> onNavigateBack()
+        }
+    }
 
     EditNoteScreen(
         state = state,
