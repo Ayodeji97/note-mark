@@ -13,11 +13,16 @@ import com.danzucker.notemark.note.presentation.notelist.NoteRoot
 @Composable
 fun NavigationRoot(
     navController: NavHostController,
+    isLoggedIn: Boolean
 ) {
 
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.Landing,
+        startDestination = if (isLoggedIn) {
+            NavigationRoute.Note
+        } else {
+            NavigationRoute.Landing
+        }
     ) {
         composable<NavigationRoute.Landing> {
             LandingScreen(
@@ -85,11 +90,12 @@ fun NavigationRoot(
 
         composable<NavigationRoute.Note> {
             NoteRoot(
-                onNavigateToCreateNote = {
-                    navController.navigate(NavigationRoute.CreateNote)
+                onNavigateToCreateNote = { noteId ->
+                    navController.navigate(NavigationRoute.CreateNote(noteId))
                 }
             )
         }
+
 
         composable<NavigationRoute.CreateNote> {
             CreateNoteRoot(

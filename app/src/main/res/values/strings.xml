@@ -41,5 +41,18 @@
     <string name="close_note">Close note</string>
     <string name="save_note">Save note</string>
     <string name="note_title_placeholder">Note Title</string>
-    <string name="note_description_placeholder">Note description...</string>
+    <string name="note_description_placeholder">Note description…</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_note_confirmation_title">Delete Note?</string>
+    <string name="delete_note_confirmation_body">Are you sure you want to delete this note? This action cannot be undone.</string>
+    <string name="delete">Delete</string>
+    <string name="unable_to_retrieve_note">Unable to retrieve note</string>
+    <string name="discard_note_confirmation_title">Discard Changes?</string>
+    <string name="discard_note_confirmation_body">You have unsaved changes. If you discard now, all changes will be lost.</string>
+    <string name="discard">Discard</string>
+    <string name="keep_editing">Keep Editing</string>
+    <string name="unable_to_save_note">Unable to save note, try again!</string>
+    <string name="error_failed_to_save_note">Unable to save note. Try again!</string>
+    <string name="empty_screen_text">You’ve got an empty board,\nlet’s place your first note on it!</string>
 </resources>

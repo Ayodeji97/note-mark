@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
@@ -26,6 +27,7 @@ fun TransparentTextField(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.onSurfaceVariant
     ),
+    cursorColor: Color = MaterialTheme.colorScheme.primary,
     singleLine: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -39,6 +41,7 @@ fun TransparentTextField(
         textStyle = textStyle,
         keyboardActions = keyboardActions,
         keyboardOptions = keyboardOptions,
+        cursorBrush = SolidColor(cursorColor),
         singleLine = singleLine,
         maxLines = maxLines,
         decorationBox = { innerTextField ->

@@ -4,14 +4,17 @@ import android.database.sqlite.SQLiteFullException
 import com.danzucker.notemark.core.database.dao.NoteDao
 import com.danzucker.notemark.core.domain.util.DataError
 import com.danzucker.notemark.core.domain.util.Result
+import com.danzucker.notemark.note.data.note.mappers.toNote
 import com.danzucker.notemark.note.data.note.mappers.toNoteEntity
 import com.danzucker.notemark.note.data.note.mappers.toNotes
 import com.danzucker.notemark.note.domain.note.local.LocalNoteDataSource
 import com.danzucker.notemark.note.domain.note.model.Note
 import com.danzucker.notemark.note.domain.note.model.Notes
 import com.danzucker.notemark.note.domain.note.local.NoteId
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class RoomLocalNoteDataSource(
     private val noteDao: NoteDao
@@ -22,6 +25,22 @@ class RoomLocalNoteDataSource(
             noteEntities.toNotes()
         }
     }
+
+    override suspend fun getNoteById(id: NoteId): Result<Note, DataError.Local> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val noteEntity = noteDao.getNoteById(id)
+                if (noteEntity != null) {
+                    Result.Success(noteEntity.toNote())
+                } else {
+                    Result.Error(DataError.Local.NOT_FOUND)
+                }
+            } catch (e: SQLiteFullException) {
+                Result.Error(DataError.Local.DISK_FULL)
+            }
+        }
+    }
+
 
     override suspend fun upsertNote(note: Note): Result<NoteId, DataError.Local> {
         return try {
@@ -45,6 +64,10 @@ class RoomLocalNoteDataSource(
 
     override suspend fun deleteNote(id: String) {
         noteDao.deleteNoteById(id)
+    }
+
+    override suspend fun deleteDraftNotes() {
+        noteDao.deleteDraftNotes()
     }
 
     override suspend fun deleteAllNotes() {
