@@ -55,4 +55,5 @@
     <string name="unable_to_save_note">Unable to save note, try again!</string>
     <string name="error_failed_to_save_note">Unable to save note. Try again!</string>
     <string name="empty_screen_text">You’ve got an empty board,\nlet’s place your first note on it!</string>
+    <string name="add_note">Add note</string>
 </resources>

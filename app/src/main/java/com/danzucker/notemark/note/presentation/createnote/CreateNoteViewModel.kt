@@ -89,6 +89,7 @@ class CreateNoteViewModel(
                             contentText = note.content,
                             originalText = note.title,
                             originalContext = note.content,
+                            saveStatus = note.saveStatus,
                         )
                     }
                 }
@@ -114,8 +115,8 @@ class CreateNoteViewModel(
 
     private fun handleEmptyNoteAndNavigateBack() {
         viewModelScope.launch {
-            if (!hasEmptyNoteTitleAndContent()) {
-                // We don't want to save an empty note, so we navigate back
+            if (!hasEmptyNoteTitleAndContent() && isDraftNote()) {
+                // We don't want to save an empty note or a draft note, so we navigate back
                 noteRepository.deleteNote(state.value.id)
             }
             eventChannel.send(CreateNoteEvent.NavigateBack)
@@ -124,9 +125,15 @@ class CreateNoteViewModel(
 
     private fun onDiscardNoteClick() {
         viewModelScope.launch {
-            noteRepository.deleteNote(state.value.id)
+            if (isDraftNote()) {
+                noteRepository.deleteNote(state.value.id)
+            }
             eventChannel.send(CreateNoteEvent.NavigateBack)
         }
+    }
+
+    private fun isDraftNote(): Boolean {
+        return state.value.saveStatus == NoteSaveStatus.DRAFT
     }
 
     private fun hasNoteChanges(): Boolean {

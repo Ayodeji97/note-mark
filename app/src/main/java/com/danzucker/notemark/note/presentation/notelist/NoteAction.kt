@@ -7,5 +7,6 @@ sealed interface NoteAction {
     data class OnDeleteNoteClick(val noteUiId: String) : NoteAction
     data object OnCancelClick : NoteAction
     data class OnNoteCardLongClick(val noteUiId: String) : NoteAction
+    data class OnNoteCardClick(val noteUiId: String) : NoteAction
     data object OnDismissConfirmationDialog : NoteAction
 }
