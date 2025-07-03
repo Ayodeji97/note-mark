@@ -6,6 +6,7 @@ import com.danzucker.notemark.core.database.entity.NoteEntity
 import com.danzucker.notemark.note.data.note.network.NoteDto
 import com.danzucker.notemark.note.data.note.network.NotesResponse
 import com.danzucker.notemark.note.domain.note.model.Note
+import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import com.danzucker.notemark.note.domain.note.model.Notes
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -16,7 +17,8 @@ fun NoteEntity.toNote(): Note {
         title = title,
         content = content,
         createdAt = Instant.parse(createdAt),
-        lastEditAt = Instant.parse(lastEditAt)
+        lastEditAt = Instant.parse(lastEditAt),
+        saveStatus = NoteSaveStatus.valueOf(saveStatus) // Convert string to enum
     )
 }
 
@@ -26,7 +28,8 @@ fun Note.toNoteEntity(): NoteEntity {
         title = title,
         content = content,
         createdAt = createdAt.toString(),
-        lastEditAt = lastEditAt.toString()
+        lastEditAt = lastEditAt.toString(),
+        saveStatus = saveStatus.name // Convert enum to string
     )
 }
 

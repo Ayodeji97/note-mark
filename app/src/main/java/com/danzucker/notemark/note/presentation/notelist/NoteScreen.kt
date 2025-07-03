@@ -1,6 +1,12 @@
-package com.danzucker.notemark.note.presentation.notelist
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
 
+package com.danzucker.notemark.note.presentation.notelist
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -11,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
@@ -18,15 +25,18 @@ import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.util.ObserveAsEvents
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.note.components.NoteList
+import com.danzucker.notemark.note.components.NoteListAlertDialog
+import com.danzucker.notemark.note.components.NoteMarkEmptyScreen
 import com.danzucker.notemark.note.components.NoteMarkGradientFloatingActionButton
 import com.danzucker.notemark.note.components.ProfileInitials
 import com.danzucker.notemark.note.presentation.preview.NotePreviewModel.noteUi
 import org.koin.androidx.compose.koinViewModel
+import kotlin.time.ExperimentalTime
 
 
 @Composable
 fun NoteRoot(
-    onNavigateToCreateNote: () -> Unit,
+    onNavigateToCreateNote: (String?) -> Unit,
     viewModel: NoteViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -34,7 +44,7 @@ fun NoteRoot(
     val context = LocalContext.current
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            NoteEvent.OnCreateNoteClick -> onNavigateToCreateNote()
+            is NoteEvent.OnCreateNoteClick -> onNavigateToCreateNote(event.noteId)
         }
     }
 
@@ -75,12 +85,53 @@ fun NoteScreen(
            )
        }
    ) { innerPadding ->
-        NoteList(
-            notes = state.notes,
-            deviceScreenType = DeviceScreenType.fromWindowSizeClass(windowClass),
-            modifier = Modifier
-                .padding(innerPadding)
-        )
+       Column(
+           modifier = Modifier
+               .fillMaxSize()
+               .padding(innerPadding)
+       ) {
+           when {
+               state.isLoadingData -> {
+                   CircularProgressIndicator(
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .wrapContentSize(),
+                       color = MaterialTheme.colorScheme.primary
+                   )
+               }
+               !state.hasNotes -> {
+                   NoteMarkEmptyScreen(
+                       modifier = Modifier
+                   )
+               }
+               else -> {
+                   NoteList(
+                       notes = state.notes,
+                       deviceScreenType = DeviceScreenType.fromWindowSizeClass(windowClass),
+                       onNoteLongClick = {
+                           onAction(NoteAction.OnNoteCardLongClick(noteUiId = it))
+                       }
+                   )
+
+               }
+           }
+       }
+
+
+       if (state.showConfirmationDialog) {
+           NoteListAlertDialog(
+               title = stringResource(id = R.string.delete_note_confirmation_title),
+               body = stringResource(id = R.string.delete_note_confirmation_body),
+               confirmText = stringResource(R.string.delete),
+               dismissText = stringResource(R.string.cancel),
+               onDismissClick = {
+                   onAction(NoteAction.OnDismissConfirmationDialog)
+               },
+               onConfirmClick = {
+                   onAction(NoteAction.OnDeleteNoteClick(noteUiId = state.currentNoteId ?: ""))
+               }
+           )
+       }
    }
 }
 

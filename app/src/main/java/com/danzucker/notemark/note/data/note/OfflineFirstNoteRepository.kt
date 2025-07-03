@@ -22,6 +22,10 @@ class OfflineFirstNoteRepository(
         return localNoteDataSource.getNotes()
     }
 
+    override suspend fun getNoteById(id: NoteId): Result<Note, DataError.Local> {
+        return localNoteDataSource.getNoteById(id)
+    }
+
     override suspend fun fetchNotes(): EmptyResult<DataError> {
         return when (val remoteNotesResult = remoteNoteDataSource.getNotes()) {
             is Result.Error -> remoteNotesResult.asEmptyDataResult()
@@ -44,7 +48,7 @@ class OfflineFirstNoteRepository(
             val remoteResult = remoteNoteDataSource.postNote(note)
 
             if (remoteResult is Result.Error) {
-                return@async Result.Success(Unit) // This will be handled later
+                return@async Result.Success(Unit)
             }
             return@async remoteResult.asEmptyDataResult()
         }.await()
@@ -60,6 +64,10 @@ class OfflineFirstNoteRepository(
         if (remoteResult is Result.Error) {
             // Handle error if needed, e.g., log it or retry
         }
+    }
+
+    override suspend fun deleteDraftNotes() {
+        localNoteDataSource.deleteDraftNotes()
     }
 
     override suspend fun deleteAllNotes() {

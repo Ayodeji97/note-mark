@@ -10,5 +10,12 @@ data class Note(
     val title: String,
     val content: String,
     val createdAt: Instant,
-    val lastEditAt: Instant
+    val lastEditAt: Instant,
+    val saveStatus: NoteSaveStatus = NoteSaveStatus.DRAFT
 )
+
+enum class NoteSaveStatus {
+    DRAFT, // Not yet saved by user
+    PENDING, // Saved but not yet synced with server
+    FINAL // Synced with server
+}

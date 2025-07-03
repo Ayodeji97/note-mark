@@ -11,5 +11,6 @@ data class NoteEntity(
     val title: String,
     val content: String,
     val createdAt: String,
-    val lastEditAt: String
+    val lastEditAt: String,
+    val saveStatus: String // DRAFT, PENDING, FINAL
 )

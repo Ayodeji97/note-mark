@@ -1,11 +1,11 @@
 package com.danzucker.notemark.note.presentation.createnote
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,15 +29,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.textfields.TransparentTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMediumLarge20
 import com.danzucker.notemark.core.presentation.util.ObserveAsEvents
+import com.danzucker.notemark.note.components.NoteListAlertDialog
 import com.danzucker.notemark.note.components.SaveNoteButton
-import com.danzucker.notemark.note.presentation.notelist.NoteEvent
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -50,7 +48,16 @@ fun CreateNoteRoot(
     val context = LocalContext.current
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            CreateNoteEvent.NoteSuccessfullySaved -> onNavigateBack()
+            CreateNoteEvent.NoteSuccessfullySaved,
+            CreateNoteEvent.NavigateBack -> onNavigateBack()
+            CreateNoteEvent.FailedToSaveNote -> {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.error_failed_to_save_note),
+                    Toast.LENGTH_LONG
+                ).show()
+                onNavigateBack()
+            }
         }
     }
 
@@ -66,6 +73,12 @@ fun EditNoteScreen(
     onAction: (CreateNoteAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    BackHandler(
+        enabled = !state.showDiscardConfirmationDialog
+    ) {
+        onAction(CreateNoteAction.OnBacK)
+    }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
@@ -134,8 +147,6 @@ fun EditNoteScreen(
                 )
             )
 
-          //  Spacer(modifier = Modifier.height(paddingMediumLarge20))
-
             TransparentTextField(
                 text = state.contentText,
                 onValueChange = {
@@ -156,6 +167,21 @@ fun EditNoteScreen(
                         focusManager.clearFocus()
                     }
                 )
+            )
+        }
+
+        if (state.showDiscardConfirmationDialog) {
+            NoteListAlertDialog(
+                title = stringResource(id = R.string.discard_note_confirmation_title),
+                body = stringResource(id = R.string.discard_note_confirmation_body),
+                confirmText = stringResource(R.string.discard),
+                dismissText = stringResource(R.string.keep_editing),
+                onDismissClick = {
+                    onAction(CreateNoteAction.OnKeepEditingClick)
+                },
+                onConfirmClick = {
+                    onAction(CreateNoteAction.OnDiscardNoteClick)
+                }
             )
         }
     }

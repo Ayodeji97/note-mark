@@ -112,6 +112,16 @@ val Typography = Typography(
             includeFontPadding = false
         )
     ),
+    displayMedium = TextStyle(
+        fontFamily = SpaceGrotesk,
+        fontWeight = FontWeight.Bold, // 700
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.sp,
+        platformStyle = PlatformTextStyle(
+            includeFontPadding = false
+        )
+    ),
 
     /* Other default text styles to override
     titleLarge = TextStyle(

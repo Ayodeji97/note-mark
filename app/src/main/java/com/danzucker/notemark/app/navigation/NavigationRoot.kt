@@ -17,7 +17,7 @@ fun NavigationRoot(
 
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.Landing,
+        startDestination = NavigationRoute.Note,
     ) {
         composable<NavigationRoute.Landing> {
             LandingScreen(
@@ -85,8 +85,8 @@ fun NavigationRoot(
 
         composable<NavigationRoute.Note> {
             NoteRoot(
-                onNavigateToCreateNote = {
-                    navController.navigate(NavigationRoute.CreateNote)
+                onNavigateToCreateNote = { noteId ->
+                    navController.navigate(NavigationRoute.CreateNote(noteId))
                 }
             )
         }

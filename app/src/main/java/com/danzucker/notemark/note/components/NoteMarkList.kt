@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.danzucker.notemark.note.components
 
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMedium16
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.paddingMediumLarge20
@@ -18,11 +21,13 @@ import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
 import com.danzucker.notemark.note.models.NoteUi
 import com.danzucker.notemark.note.presentation.preview.NotePreviewModel.noteUi
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun NoteList(
     notes: List<NoteUi>,
     deviceScreenType: DeviceScreenType,
+    onNoteLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (columnCount, contentPadding) = when (deviceScreenType) {
@@ -36,9 +41,9 @@ fun NoteList(
         columns = StaggeredGridCells.Fixed(columnCount), // Change this base on screen size
         modifier = modifier
             .fillMaxSize(),
-        contentPadding = PaddingValues(contentPadding),
-        verticalItemSpacing = paddingMedium16,
-        horizontalArrangement = Arrangement.spacedBy(paddingMedium16),
+        horizontalArrangement = Arrangement.spacedBy(contentPadding),
+        verticalItemSpacing = contentPadding,
+        contentPadding = PaddingValues(paddingMedium16),
     ) {
         items(
             items = notes,
@@ -46,8 +51,12 @@ fun NoteList(
         ) { noteUi ->
             NoteListItem(
                noteUi =  noteUi,
-                onClick = { /* Handle note click */ },
-                modifier = Modifier.padding(paddingMedium16)
+                deviceScreenType = deviceScreenType,
+                onClick = {},
+                onLongClick = {
+                    onNoteLongClick(noteUi.id)
+                },
+                modifier = Modifier
             )
         }
     }
@@ -68,6 +77,7 @@ private fun NoteListPreview() {
         NoteList(
             notes = noteUiPreview,
             deviceScreenType = MOBILE_PORTRAIT,
+            onNoteLongClick = { /* Handle long click */ },
             modifier = Modifier
         )
     }

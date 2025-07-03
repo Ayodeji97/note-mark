@@ -12,6 +12,9 @@ interface NoteDao {
     @Query("SELECT * FROM note_db ORDER BY lastEditAt DESC")
     fun getNotes(): Flow<List<NoteEntity>>
 
+    @Query("SELECT * FROM note_db WHERE id = :id")
+    fun getNoteById(id: String): NoteEntity?
+
     @Upsert
     suspend fun upsertNote(note: NoteEntity): Long
 
@@ -20,6 +23,9 @@ interface NoteDao {
 
     @Query("DELETE FROM note_db WHERE id = :id")
     suspend fun deleteNoteById(id: String)
+
+    @Query("DELETE FROM note_db WHERE saveStatus = 'DRAFT'")
+    suspend fun deleteDraftNotes()
 
     @Query("DELETE FROM note_db")
     suspend fun deleteAllNotes()
