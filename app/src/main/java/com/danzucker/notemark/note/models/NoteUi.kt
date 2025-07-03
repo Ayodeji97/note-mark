@@ -14,7 +14,6 @@ data class NoteUi(
     val createdAt: Instant,
     val lastEditAt: Instant,
     val saveStatus: NoteSaveStatus
-   // = NoteSaveStatus.DRAFT
 ) {
     val formattedCreatedAt: String
         get() = createdAt.toReadableTime()

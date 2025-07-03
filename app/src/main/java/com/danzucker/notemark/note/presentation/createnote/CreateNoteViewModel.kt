@@ -14,6 +14,8 @@ import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -127,8 +129,6 @@ class CreateNoteViewModel(
         }
     }
 
-    // TODO: Handle validation of title
-
     private fun hasNoteChanges(): Boolean {
         val currentState = state.value
         return currentState.titleText != currentState.originalText ||
@@ -201,9 +201,7 @@ class CreateNoteViewModel(
                     // Optionally, you can handle navigation back or show an error
                     eventChannel.send(CreateNoteEvent.FailedToSaveNote)
                 }
-
             }
-
         }
     }
 }
