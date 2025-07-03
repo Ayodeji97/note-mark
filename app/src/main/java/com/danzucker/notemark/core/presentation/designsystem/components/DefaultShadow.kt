@@ -13,7 +13,7 @@ val BrandDefaultShadowColor = Color(0xFF1B1B1C) // Base color used in your desig
 
 fun Modifier.defaultShadow(
     shape: Shape = CircleShape,
-    elevation: Dp = 8.dp, // Matches your original spec: 8px shadow
+    elevation: Dp = 8.dp,
     alpha: Float = 0.12f  // #1F = ~12% opacity
 ): Modifier {
     return this.shadow(
