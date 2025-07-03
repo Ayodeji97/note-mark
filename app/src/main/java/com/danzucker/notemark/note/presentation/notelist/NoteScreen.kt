@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class, ExperimentalTime::class)
 
 package com.danzucker.notemark.note.presentation.notelist
 import androidx.compose.foundation.layout.Column
@@ -69,7 +69,7 @@ fun NoteScreen(
                title = stringResource(id = R.string.app_name),
                actionContent = {
                    ProfileInitials(
-                       profileInitials = "DA", // replace later with state.profileInitials,
+                       profileInitials = state.userProfileInitials, // replace later with state.profileInitials,
                        onProfileClick = {
                            onAction(NoteAction.OnProfileClick)
                        }
@@ -116,7 +116,6 @@ fun NoteScreen(
                }
            }
        }
-
 
        if (state.showConfirmationDialog) {
            NoteListAlertDialog(

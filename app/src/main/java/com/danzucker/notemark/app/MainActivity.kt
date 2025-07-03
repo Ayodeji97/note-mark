@@ -4,47 +4,35 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.danzucker.notemark.app.navigation.NavigationRoot
-import com.danzucker.notemark.auth.presentation.landing.LandingScreen
-import com.danzucker.notemark.auth.presentation.login.LoginRoot
-import com.danzucker.notemark.auth.presentation.register.RegisterRoot
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.danzucker.notemark.note.presentation.createnote.CreateNoteRoot
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.state.value.isCheckingAuth || !viewModel.state.value.isAuthCheckComplete
+            }
+        }
         enableEdgeToEdge()
         setContent {
             NoteMarkTheme {
-                NavigationRoot(
-                    navController = rememberNavController(),
-                )
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                if (state.isAuthCheckComplete) {
+                    NavigationRoot(
+                        navController = rememberNavController(),
+                        isLoggedIn = state.isLoggedIn
+                    )
+                }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NoteMarkTheme {
-        Greeting("Android")
     }
 }

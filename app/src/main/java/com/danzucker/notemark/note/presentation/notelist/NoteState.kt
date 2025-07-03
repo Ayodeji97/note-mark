@@ -7,5 +7,6 @@ data class NoteState(
     val notes: List<NoteUi> = emptyList(),
     val showConfirmationDialog: Boolean = false,
     val isLoadingData: Boolean = true,
-    val hasNotes: Boolean = false
+    val hasNotes: Boolean = false,
+    val userProfileInitials: String = "",
 )

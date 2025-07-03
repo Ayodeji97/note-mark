@@ -2,6 +2,7 @@ package com.danzucker.notemark.app.navigation
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface NavigationRoute {
     @Serializable
     data object Landing : NavigationRoute

@@ -164,6 +164,7 @@ fun EditNoteScreen(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
+                        onAction(CreateNoteAction.OnSaveClick)
                         focusManager.clearFocus()
                     }
                 )
