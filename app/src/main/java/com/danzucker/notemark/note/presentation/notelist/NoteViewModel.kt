@@ -1,10 +1,11 @@
-@file:OptIn(ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
 
 package com.danzucker.notemark.note.presentation.notelist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
 import com.danzucker.notemark.core.domain.util.Result
 import com.danzucker.notemark.core.presentation.util.UiText
@@ -26,7 +27,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -60,12 +60,13 @@ class NoteViewModel(
 
     fun onAction(action: NoteAction) {
         when (action) {
-            NoteAction.OnCreateNoteClick -> onCreateNoteClick()
-            NoteAction.OnProfileClick -> Unit
+            is NoteAction.OnCreateNoteClick -> onCreateNoteClick()
+            is NoteAction.OnProfileClick -> Unit
             is NoteAction.OnDeleteNoteClick -> deleteNote(noteId = action.noteUiId)
             is NoteAction.OnNoteCardLongClick -> showConfirmationDialog(currentNoteId = action.noteUiId)
-            NoteAction.OnCancelClick,
-            NoteAction.OnDismissConfirmationDialog -> hideConfirmationDialog()
+            is NoteAction.OnCancelClick,
+            is NoteAction.OnDismissConfirmationDialog -> hideConfirmationDialog()
+            is NoteAction.OnNoteCardClick -> {}
         }
     }
 
@@ -82,6 +83,12 @@ class NoteViewModel(
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun fetchNotes() {
+        viewModelScope.launch {
+            noteRepository.fetchNotes()
+        }
     }
 
     private fun onCreateNoteClick() {

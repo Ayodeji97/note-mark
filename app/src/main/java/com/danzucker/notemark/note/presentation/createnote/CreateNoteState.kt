@@ -1,6 +1,7 @@
 package com.danzucker.notemark.note.presentation.createnote
 
 import com.danzucker.notemark.core.presentation.util.UiText
+import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 
 data class CreateNoteState(
     val id: String = "",
@@ -11,5 +12,5 @@ data class CreateNoteState(
     val showDiscardConfirmationDialog: Boolean = false,
     val isLoading: Boolean = false,
     val errorText: UiText? = null,
-    val canSave: Boolean = true
+    val saveStatus: NoteSaveStatus = NoteSaveStatus.DRAFT,
 )

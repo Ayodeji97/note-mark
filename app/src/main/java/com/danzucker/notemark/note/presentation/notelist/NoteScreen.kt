@@ -50,7 +50,13 @@ fun NoteRoot(
 
     NoteScreen(
         state = state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                is NoteAction.OnNoteCardClick -> onNavigateToCreateNote(action.noteUiId)
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -108,6 +114,9 @@ fun NoteScreen(
                    NoteList(
                        notes = state.notes,
                        deviceScreenType = DeviceScreenType.fromWindowSizeClass(windowClass),
+                       onNoteClick = {
+                           onAction(NoteAction.OnNoteCardClick(noteUiId = it))
+                       },
                        onNoteLongClick = {
                            onAction(NoteAction.OnNoteCardLongClick(noteUiId = it))
                        }

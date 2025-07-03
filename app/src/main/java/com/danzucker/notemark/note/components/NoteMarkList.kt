@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class)
 
 package com.danzucker.notemark.note.components
 
@@ -27,6 +27,7 @@ import kotlin.time.ExperimentalTime
 fun NoteList(
     notes: List<NoteUi>,
     deviceScreenType: DeviceScreenType,
+    onNoteClick: (String) -> Unit,
     onNoteLongClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -52,7 +53,9 @@ fun NoteList(
             NoteListItem(
                noteUi =  noteUi,
                 deviceScreenType = deviceScreenType,
-                onClick = {},
+                onClick = {
+                    onNoteClick(noteUi.id)
+                },
                 onLongClick = {
                     onNoteLongClick(noteUi.id)
                 },
@@ -78,6 +81,7 @@ private fun NoteListPreview() {
             notes = noteUiPreview,
             deviceScreenType = MOBILE_PORTRAIT,
             onNoteLongClick = { /* Handle long click */ },
+            onNoteClick = { /* Handle click */ },
             modifier = Modifier
         )
     }
