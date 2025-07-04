@@ -9,6 +9,7 @@ import com.danzucker.notemark.auth.presentation.login.LoginRoot
 import com.danzucker.notemark.auth.presentation.register.RegisterRoot
 import com.danzucker.notemark.note.presentation.createnote.CreateNoteRoot
 import com.danzucker.notemark.note.presentation.notelist.NoteRoot
+import com.danzucker.notemark.note.presentation.settings.SettingsRoot
 
 @Composable
 fun NavigationRoot(
@@ -92,7 +93,10 @@ fun NavigationRoot(
             NoteRoot(
                 onNavigateToCreateNote = { noteId ->
                     navController.navigate(NavigationRoute.CreateNote(noteId))
-                }
+                },
+                onNavigateToSettings = {
+                    navController.navigate(NavigationRoute.Settings)
+                },
             )
         }
 
@@ -100,6 +104,12 @@ fun NavigationRoot(
         composable<NavigationRoute.CreateNote> {
             CreateNoteRoot(
                 onNavigateBack = navController::navigateUp
+            )
+        }
+
+        composable<NavigationRoute.Settings> {
+            SettingsRoot(
+                onBackClick = navController::navigateUp
             )
         }
     }

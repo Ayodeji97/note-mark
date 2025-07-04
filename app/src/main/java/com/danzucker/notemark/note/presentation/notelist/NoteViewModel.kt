@@ -66,7 +66,8 @@ class NoteViewModel(
             is NoteAction.OnNoteCardLongClick -> showConfirmationDialog(currentNoteId = action.noteUiId)
             is NoteAction.OnCancelClick,
             is NoteAction.OnDismissConfirmationDialog -> hideConfirmationDialog()
-            is NoteAction.OnNoteCardClick -> {}
+            is NoteAction.OnNoteCardClick -> {} // This is handled in the root composable (NoteRoot)
+            NoteAction.OnSettingsClick -> {}
         }
     }
 

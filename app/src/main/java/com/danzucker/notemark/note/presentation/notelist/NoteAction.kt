@@ -9,4 +9,5 @@ sealed interface NoteAction {
     data class OnNoteCardLongClick(val noteUiId: String) : NoteAction
     data class OnNoteCardClick(val noteUiId: String) : NoteAction
     data object OnDismissConfirmationDialog : NoteAction
+    data object OnSettingsClick : NoteAction
 }

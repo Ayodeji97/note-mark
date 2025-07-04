@@ -18,4 +18,7 @@ sealed interface NavigationRoute {
 
     @Serializable
     data class CreateNote(val noteId: String?) : NavigationRoute
+
+    @Serializable
+    data object Settings
 }
