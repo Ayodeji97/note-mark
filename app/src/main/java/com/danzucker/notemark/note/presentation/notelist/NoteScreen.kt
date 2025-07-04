@@ -1,12 +1,20 @@
-@file:OptIn(ExperimentalTime::class, ExperimentalTime::class, ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class, ExperimentalTime::class, ExperimentalTime::class,
+    ExperimentalTime::class
+)
 
 package com.danzucker.notemark.note.presentation.notelist
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -37,6 +45,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun NoteRoot(
     onNavigateToCreateNote: (String?) -> Unit,
+    onNavigateToSettings: () -> Unit,
     viewModel: NoteViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -53,6 +62,7 @@ fun NoteRoot(
         onAction = { action ->
             when (action) {
                 is NoteAction.OnNoteCardClick -> onNavigateToCreateNote(action.noteUiId)
+                is NoteAction.OnSettingsClick -> onNavigateToSettings()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -74,12 +84,29 @@ fun NoteScreen(
            NoteMarkTopAppBar(
                title = stringResource(id = R.string.app_name),
                actionContent = {
-                   ProfileInitials(
-                       profileInitials = state.userProfileInitials, // replace later with state.profileInitials,
-                       onProfileClick = {
-                           onAction(NoteAction.OnProfileClick)
+                   Row(
+                       horizontalArrangement = Arrangement.spacedBy(11.dp)
+                   ) {
+                       IconButton(
+                           onClick = {
+                                 onAction(NoteAction.OnSettingsClick)
+                           }
+                       ) {
+                           Icon(
+                               imageVector = Icons.Outlined.Settings,
+                               contentDescription = stringResource(R.string.settings),
+                               tint = MaterialTheme.colorScheme.onSurface
+                           )
                        }
-                   )
+
+                       ProfileInitials(
+                           profileInitials = state.userProfileInitials,
+                           onProfileClick = {
+                               onAction(NoteAction.OnProfileClick)
+                           }
+                       )
+                   }
+
                }
            )
        },
