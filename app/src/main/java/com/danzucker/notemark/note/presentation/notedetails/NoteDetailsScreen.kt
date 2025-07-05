@@ -1,4 +1,4 @@
-package com.danzucker.notemark.note.presentation.createnote
+package com.danzucker.notemark.note.presentation.notedetails
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -41,16 +41,16 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CreateNoteRoot(
     onNavigateBack: () -> Unit,
-    viewModel: CreateNoteViewModel = koinViewModel()
+    viewModel: NoteDetailsViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     ObserveAsEvents(viewModel.events) { event ->
         when (event) {
-            CreateNoteEvent.NoteSuccessfullySaved,
-            CreateNoteEvent.NavigateBack -> onNavigateBack()
-            CreateNoteEvent.FailedToSaveNote -> {
+            NoteDetailsEvent.NoteDetailsSuccessfullySaved,
+            NoteDetailsEvent.NavigateBack -> onNavigateBack()
+            NoteDetailsEvent.FailedToSaveNoteDetails -> {
                 Toast.makeText(
                     context,
                     context.getString(R.string.error_failed_to_save_note),
@@ -69,15 +69,15 @@ fun CreateNoteRoot(
 
 @Composable
 fun EditNoteScreen(
-    state: CreateNoteState,
-    onAction: (CreateNoteAction) -> Unit,
+    state: NoteDetailsState,
+    onAction: (NoteDetailsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     BackHandler(
         enabled = !state.showDiscardConfirmationDialog
     ) {
-        onAction(CreateNoteAction.OnBacK)
+        onAction(NoteDetailsAction.OnBacK)
     }
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
@@ -86,7 +86,7 @@ fun EditNoteScreen(
               navigationIcon = {
                   IconButton(
                       onClick = {
-                            onAction(CreateNoteAction.OnCloseClick)
+                            onAction(NoteDetailsAction.OnCloseClick)
                       }
                   ) {
                       Icon(
@@ -99,7 +99,7 @@ fun EditNoteScreen(
                     SaveNoteButton(
                         text = stringResource(R.string.save_note).uppercase(),
                         onClick = {
-                            onAction(CreateNoteAction.OnSaveClick)
+                            onAction(NoteDetailsAction.OnSaveClick)
                         }
                     )
                 }
@@ -127,7 +127,7 @@ fun EditNoteScreen(
             TransparentTextField(
                 text = state.titleText,
                 onValueChange = {
-                    onAction(CreateNoteAction.OnTitleTextChange(it))
+                    onAction(NoteDetailsAction.OnTitleTextChange(it))
                 },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -150,7 +150,7 @@ fun EditNoteScreen(
             TransparentTextField(
                 text = state.contentText,
                 onValueChange = {
-                    onAction(CreateNoteAction.OnContentTextChange(it))
+                    onAction(NoteDetailsAction.OnContentTextChange(it))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +164,7 @@ fun EditNoteScreen(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        onAction(CreateNoteAction.OnSaveClick)
+                        onAction(NoteDetailsAction.OnSaveClick)
                         focusManager.clearFocus()
                     }
                 )
@@ -178,10 +178,10 @@ fun EditNoteScreen(
                 confirmText = stringResource(R.string.discard),
                 dismissText = stringResource(R.string.keep_editing),
                 onDismissClick = {
-                    onAction(CreateNoteAction.OnKeepEditingClick)
+                    onAction(NoteDetailsAction.OnKeepEditingClick)
                 },
                 onConfirmClick = {
-                    onAction(CreateNoteAction.OnDiscardNoteClick)
+                    onAction(NoteDetailsAction.OnDiscardNoteDetailsClick)
                 }
             )
         }
@@ -194,7 +194,7 @@ fun EditNoteScreen(
 private fun EditNoteScreenPreview() {
     NoteMarkTheme {
         EditNoteScreen(
-            state = CreateNoteState(),
+            state = NoteDetailsState(),
             onAction = {}
         )
     }

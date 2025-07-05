@@ -1,9 +1,9 @@
-package com.danzucker.notemark.note.presentation.createnote
+package com.danzucker.notemark.note.presentation.notedetails
 
 import com.danzucker.notemark.core.presentation.util.UiText
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 
-data class CreateNoteState(
+data class NoteDetailsState(
     val id: String = "",
     val titleText: String = "",
     val contentText: String = "",
