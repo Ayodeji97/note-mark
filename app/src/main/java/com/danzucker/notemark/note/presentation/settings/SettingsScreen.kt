@@ -12,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,12 +28,16 @@ import com.danzucker.notemark.core.presentation.designsystem.LogoutIcon
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontSizeMedium16
+import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
+import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
 fun SettingsRoot(
     onBackClick: () -> Unit,
-    viewModel: SettingsViewModel = viewModel()
+    onLogoutClick: () -> Unit,
+    viewModel: SettingsViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -41,6 +46,7 @@ fun SettingsRoot(
         onAction = { action ->
             when (action) {
                 is SettingsAction.OnBackClick -> onBackClick()
+                is SettingsAction.OnLogoutClick -> onLogoutClick()
                 else -> Unit
             }
             viewModel.onAction(action)
@@ -53,7 +59,18 @@ fun SettingsScreen(
     state: SettingsState,
     onAction: (SettingsAction) -> Unit,
 ) {
+    val windowClass = currentWindowAdaptiveInfo().windowSizeClass
+    val contentPadding = when (DeviceScreenType.fromWindowSizeClass(windowClass)) {
+        MOBILE_PORTRAIT,
+        TABLET_PORTRAIT  -> 0.dp
+        MOBILE_LANDSCAPE,
+        TABLET_LANDSCAPE,
+        DESKTOP -> 40.dp
+
+    }
     Scaffold(
+        modifier = Modifier
+            .padding(start = contentPadding),
         containerColor = MaterialTheme.colorScheme.onPrimary,
         topBar = {
             NoteMarkTopAppBar(
@@ -111,7 +128,7 @@ fun SettingsScreen(
 
 @Preview
 @Composable
-private fun Preview() {
+private fun SettingsScreenPreview() {
     NoteMarkTheme {
         SettingsScreen(
             state = SettingsState(),

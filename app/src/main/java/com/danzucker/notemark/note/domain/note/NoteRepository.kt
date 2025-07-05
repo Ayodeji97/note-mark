@@ -15,4 +15,5 @@ interface NoteRepository {
     suspend fun deleteNote(id: NoteId)
     suspend fun deleteDraftNotes()
     suspend fun deleteAllNotes()
+    suspend fun logout(): Result<Unit, DataError.Network>
 }
