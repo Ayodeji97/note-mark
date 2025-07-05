@@ -2,12 +2,20 @@ package com.danzucker.notemark.note.presentation.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
+import com.danzucker.notemark.note.domain.note.NoteRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(
+    private val noteRepository: NoteRepository,
+    private val applicationScope: CoroutineScope,
+    private val sessionStorage: SessionStorage
+) : ViewModel() {
 
     private var hasLoadedInitialData = false
 
@@ -33,7 +41,11 @@ class SettingsViewModel : ViewModel() {
     }
 
     private fun onLogout() {
-
+        applicationScope.launch {
+            noteRepository.deleteAllNotes()
+            noteRepository.logout()
+            sessionStorage.set(null)
+        }
     }
 
 }

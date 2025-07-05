@@ -9,6 +9,7 @@ import com.danzucker.notemark.note.domain.note.local.LocalNoteDataSource
 import com.danzucker.notemark.note.domain.note.network.RemoteNoteDataSource
 import com.danzucker.notemark.note.presentation.createnote.CreateNoteViewModel
 import com.danzucker.notemark.note.presentation.notelist.NoteViewModel
+import com.danzucker.notemark.note.presentation.settings.SettingsViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -22,4 +23,5 @@ val noteModule = module {
     // ViewModels
     viewModelOf(::NoteViewModel)
     viewModelOf(::CreateNoteViewModel)
+    viewModelOf(::SettingsViewModel)
 }

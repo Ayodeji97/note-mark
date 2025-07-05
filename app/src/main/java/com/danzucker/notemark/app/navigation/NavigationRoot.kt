@@ -109,7 +109,14 @@ fun NavigationRoot(
 
         composable<NavigationRoute.Settings> {
             SettingsRoot(
-                onBackClick = navController::navigateUp
+                onBackClick = navController::navigateUp,
+                onLogoutClick = {
+                    navController.navigate(NavigationRoute.Landing) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
     }
