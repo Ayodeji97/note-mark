@@ -13,4 +13,6 @@ data class NoteDetailsState(
     val isLoading: Boolean = false,
     val errorText: UiText? = null,
     val saveStatus: NoteSaveStatus = NoteSaveStatus.DRAFT,
+    // This added state can be changes later during the note logic implementation
+    val isViewMode: Boolean = true // For testing purposes, can be removed later
 )

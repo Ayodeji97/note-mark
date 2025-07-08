@@ -4,13 +4,20 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,19 +34,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.textfields.TransparentTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontSizeMedium16
 import com.danzucker.notemark.core.presentation.util.ObserveAsEvents
+import com.danzucker.notemark.core.presentation.util.negativePadding
 import com.danzucker.notemark.note.components.NoteListAlertDialog
 import com.danzucker.notemark.note.components.SaveNoteButton
+import com.danzucker.notemark.note.presentation.notedetails.components.NoteDetailsMetaData
+import com.danzucker.notemark.note.presentation.notedetails.components.NoteMarkDetailsBottomAppBar
+import com.danzucker.notemark.note.presentation.settings.SettingsAction
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun CreateNoteRoot(
+fun NoteDetailsRoot(
     onNavigateBack: () -> Unit,
     viewModel: NoteDetailsViewModel = koinViewModel()
 ) {
@@ -61,14 +74,14 @@ fun CreateNoteRoot(
         }
     }
 
-    EditNoteScreen(
+    NoteDetailsScreen(
         state = state,
         onAction = viewModel::onAction
     )
 }
 
 @Composable
-fun EditNoteScreen(
+fun NoteDetailsScreen(
     state: NoteDetailsState,
     onAction: (NoteDetailsAction) -> Unit,
     modifier: Modifier = Modifier
@@ -80,29 +93,76 @@ fun EditNoteScreen(
         onAction(NoteDetailsAction.OnBacK)
     }
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         topBar = {
             NoteMarkTopAppBar(
               navigationIcon = {
-                  IconButton(
-                      onClick = {
-                            onAction(NoteDetailsAction.OnCloseClick)
-                      }
-                  ) {
-                      Icon(
-                          imageVector = Icons.Default.Close,
-                          contentDescription = stringResource(R.string.close_note),
+                  if (state.isViewMode) {
+                      NoteMarkTopAppBar(
+                          modifier = Modifier
+                              .offset {
+                                    IntOffset(
+                                        x = (-16), // Adjust the x offset to align the title properly
+                                        y = 0
+                                    )
+                              },
+                          title = stringResource(R.string.all_notes).uppercase(),
+                          titleTextSize = fontSizeMedium16,
+                          titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                          titleTextOffset = IntOffset(x = (-16),  y = 0),
+                          navigationIcon = {
+                              IconButton(
+                                  onClick = {
+                                      onAction(NoteDetailsAction.OnBacK)
+                                  }
+                              ) {
+                                  Icon(
+                                      imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                                      contentDescription = stringResource(R.string.navigate_back),
+                                      tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                  )
+                              }
+                          }
+
                       )
+                  } else {
+                      IconButton(
+                          onClick = {
+                              onAction(NoteDetailsAction.OnCloseClick)
+                          }
+                      ) {
+                          Icon(
+                              imageVector = Icons.Default.Close,
+                              contentDescription = stringResource(R.string.close_note),
+                          )
+                      }
                   }
               },
                 actionContent = {
-                    SaveNoteButton(
-                        text = stringResource(R.string.save_note).uppercase(),
-                        onClick = {
-                            onAction(NoteDetailsAction.OnSaveClick)
-                        }
-                    )
+                    if (!state.isViewMode) {
+                        SaveNoteButton(
+                            text = stringResource(R.string.save_note).uppercase(),
+                            onClick = {
+                                onAction(NoteDetailsAction.OnSaveClick)
+                            }
+                        )
+                    }
                 }
+            )
+        },
+        bottomBar = {
+            NoteMarkDetailsBottomAppBar(
+                modifier = Modifier
+                    .padding(
+                        bottom = WindowInsets
+                            .navigationBars
+                            .asPaddingValues()
+                            .calculateBottomPadding()
+                    ),
+                isEditModeSelected = false,
+                isReadModeSelected = false,
+                onEditModeClick = {},
+                onReadModeClick = {},
             )
         }
     ) { innerPadding ->
@@ -145,6 +205,18 @@ fun EditNoteScreen(
                         descriptionFocusRequester.requestFocus()
                     }
                 )
+            )
+
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                modifier = Modifier.negativePadding(horizontal = 16.dp)
+            )
+
+            NoteDetailsMetaData()
+
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                modifier = Modifier.negativePadding(horizontal = 16.dp)
             )
 
             TransparentTextField(
@@ -191,9 +263,9 @@ fun EditNoteScreen(
 
 @Preview
 @Composable
-private fun EditNoteScreenPreview() {
+private fun NoteDetailsScreenPreview() {
     NoteMarkTheme {
-        EditNoteScreen(
+        NoteDetailsScreen(
             state = NoteDetailsState(),
             onAction = {}
         )
