@@ -13,16 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Preview (2)">
+      <SelectionState runConfigName="NoteMetaDataDateTimePreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EditNoteScreenPreview">
+      <SelectionState runConfigName="NoteDetailsMetaDataPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EditNoteScreenPreview (1)">
+      <SelectionState runConfigName="NoteMarkDetailsBottomAppBarPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="NoteMarkGradientFloatingActionButtonPreview">
+      <SelectionState runConfigName="NoteDetailsScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="NoteDetailsLandScapeContentPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
