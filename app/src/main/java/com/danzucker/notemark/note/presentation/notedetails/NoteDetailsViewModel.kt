@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 
-package com.danzucker.notemark.note.presentation.createnote
+package com.danzucker.notemark.note.presentation.notedetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,18 +14,15 @@ import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-class CreateNoteViewModel(
+class NoteDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val noteRepository: NoteRepository
 ) : ViewModel() {
@@ -34,9 +31,9 @@ class CreateNoteViewModel(
 
     private val noteId = savedStateHandle.get<String>("noteId")
 
-    private val _state = MutableStateFlow(CreateNoteState())
+    private val _state = MutableStateFlow(NoteDetailsState())
 
-    private val eventChannel = Channel<CreateNoteEvent>()
+    private val eventChannel = Channel<NoteDetailsEvent>()
     val events = eventChannel.receiveAsFlow()
 
     val state = _state
@@ -50,18 +47,18 @@ class CreateNoteViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = CreateNoteState()
+            initialValue = NoteDetailsState()
         )
 
-    fun onAction(action: CreateNoteAction) {
+    fun onAction(action: NoteDetailsAction) {
         when (action) {
-            is CreateNoteAction.OnTitleTextChange -> onTitleTextChange(action.text)
-            is CreateNoteAction.OnContentTextChange -> onContentTextChange(action.text)
-            is CreateNoteAction.OnSaveClick -> onSaveClick()
-            is CreateNoteAction.OnKeepEditingClick -> hideDiscardConfirmationDialog()
-            is CreateNoteAction.OnDiscardNoteClick -> onDiscardNoteClick()
-            is CreateNoteAction.OnCloseClick,
-            is CreateNoteAction.OnBacK-> onCloseClick()
+            is NoteDetailsAction.OnTitleTextChange -> onTitleTextChange(action.text)
+            is NoteDetailsAction.OnContentTextChange -> onContentTextChange(action.text)
+            is NoteDetailsAction.OnSaveClick -> onSaveClick()
+            is NoteDetailsAction.OnKeepEditingClick -> hideDiscardConfirmationDialog()
+            is NoteDetailsAction.OnDiscardNoteDetailsClick -> onDiscardNoteClick()
+            is NoteDetailsAction.OnCloseClick,
+            is NoteDetailsAction.OnBacK-> onCloseClick()
         }
     }
 
@@ -119,7 +116,7 @@ class CreateNoteViewModel(
                 // We don't want to save an empty note or a draft note, so we navigate back
                 noteRepository.deleteNote(state.value.id)
             }
-            eventChannel.send(CreateNoteEvent.NavigateBack)
+            eventChannel.send(NoteDetailsEvent.NavigateBack)
         }
     }
 
@@ -128,7 +125,7 @@ class CreateNoteViewModel(
             if (isDraftNote()) {
                 noteRepository.deleteNote(state.value.id)
             }
-            eventChannel.send(CreateNoteEvent.NavigateBack)
+            eventChannel.send(NoteDetailsEvent.NavigateBack)
         }
     }
 
@@ -197,7 +194,7 @@ class CreateNoteViewModel(
 
             when (noteRepository.createNote(note = note)) {
                 is Result.Success -> {
-                    eventChannel.send(CreateNoteEvent.NoteSuccessfullySaved)
+                    eventChannel.send(NoteDetailsEvent.NoteDetailsSuccessfullySaved)
                 }
                 is Result.Error -> {
                     _state.update {
@@ -206,7 +203,7 @@ class CreateNoteViewModel(
                         )
                     }
                     // Optionally, you can handle navigation back or show an error
-                    eventChannel.send(CreateNoteEvent.FailedToSaveNote)
+                    eventChannel.send(NoteDetailsEvent.FailedToSaveNoteDetails)
                 }
             }
         }

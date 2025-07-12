@@ -1,13 +1,12 @@
 package com.danzucker.notemark.note.di
 
-import androidx.room.Room
 import com.danzucker.notemark.note.data.note.OfflineFirstNoteRepository
 import com.danzucker.notemark.note.data.note.local.RoomLocalNoteDataSource
 import com.danzucker.notemark.note.data.note.network.KtorRemoteNoteDataSource
 import com.danzucker.notemark.note.domain.note.NoteRepository
 import com.danzucker.notemark.note.domain.note.local.LocalNoteDataSource
 import com.danzucker.notemark.note.domain.note.network.RemoteNoteDataSource
-import com.danzucker.notemark.note.presentation.createnote.CreateNoteViewModel
+import com.danzucker.notemark.note.presentation.notedetails.NoteDetailsViewModel
 import com.danzucker.notemark.note.presentation.notelist.NoteViewModel
 import com.danzucker.notemark.note.presentation.settings.SettingsViewModel
 import org.koin.core.module.dsl.singleOf
@@ -22,6 +21,6 @@ val noteModule = module {
 
     // ViewModels
     viewModelOf(::NoteViewModel)
-    viewModelOf(::CreateNoteViewModel)
+    viewModelOf(::NoteDetailsViewModel)
     viewModelOf(::SettingsViewModel)
 }

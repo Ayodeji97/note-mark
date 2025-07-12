@@ -1,9 +1,9 @@
-package com.danzucker.notemark.note.presentation.createnote
+package com.danzucker.notemark.note.presentation.notedetails
 
 import com.danzucker.notemark.core.presentation.util.UiText
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 
-data class CreateNoteState(
+data class NoteDetailsState(
     val id: String = "",
     val titleText: String = "",
     val contentText: String = "",
@@ -13,4 +13,6 @@ data class CreateNoteState(
     val isLoading: Boolean = false,
     val errorText: UiText? = null,
     val saveStatus: NoteSaveStatus = NoteSaveStatus.DRAFT,
+    // This added state can be changes later during the note logic implementation
+    val isViewMode: Boolean = true // For testing purposes, can be removed later
 )

@@ -16,3 +16,11 @@ val EyeOpenedIcon: ImageVector
 val LogoutIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.logout)
+
+val EditIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.edit)
+
+val ReadIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.read)

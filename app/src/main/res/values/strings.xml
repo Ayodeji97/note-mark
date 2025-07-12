@@ -59,4 +59,7 @@
     <string name="settings">Settings</string>
     <string name="navigate_back">Navigate Back</string>
     <string name="logout">Log out</string>
+    <string name="all_notes">All notes</string>
+    <string name="edit_botton">Edit Button</string>
+    <string name="read_botton">Read Button</string>
 </resources>

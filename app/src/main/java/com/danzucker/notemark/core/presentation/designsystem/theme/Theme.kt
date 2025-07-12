@@ -19,7 +19,8 @@ private val LightColorScheme = lightColorScheme(
     background = NoteMarkBlue,
     surfaceContainer = NoteMarkBackgroundColor,
     error = NoteMarkError,
-    errorContainer = NoteMarkError
+    errorContainer = NoteMarkError,
+    tertiaryContainer = NoteMarkLightBlueColor10
 )
 
 

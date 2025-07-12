@@ -16,8 +16,12 @@ val NoteMarkBackgroundColor = Color(0xFFE0EAFF)
 val NoteMarkOnSurfaceLowest = Color(0xFFFFFFFF)
 val NoteMarkGradientLightColor = Color(0xFF58A1F8)
 val NoteMarkGradientSolidColor = Color(0xFF5A4CF7)
+val NoteMarkLightBlueColor10 = Color(0x1A5977F7)
 
 val NoteMarkError = Color(0xFFE1294B)
+
+val NoteMarkSelectedSurface = Color(0xFFE3E8FC)
+val NoteMarkSelectedIconBackground = Color(0xFFDDE5FB)
 
 
 
@@ -28,3 +32,16 @@ val ColorScheme.FabGradient: Brush
             NoteMarkGradientSolidColor
         )
     )
+
+
+data class NoteMarkSelectedStateColorScheme(
+    val surface: Color,
+    val iconContainer: Color,
+    val iconContent: Color
+)
+
+val LightSelectedStateColorScheme = NoteMarkSelectedStateColorScheme(
+    surface = NoteMarkSelectedSurface, // #E3E8FC
+    iconContainer = NoteMarkSelectedIconBackground, // #DDE5FB
+    iconContent = NoteMarkWhite // assuming white icons on selection
+)
