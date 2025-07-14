@@ -11,7 +11,10 @@ import com.danzucker.notemark.core.presentation.util.UiText
 import com.danzucker.notemark.note.domain.note.model.Note
 import com.danzucker.notemark.note.domain.note.NoteRepository
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
+import com.danzucker.notemark.note.presentation.notedetails.screenMode.ScreenMode
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
@@ -28,6 +31,7 @@ class NoteDetailsViewModel(
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
+    private var autoHideJob: Job? = null
 
     private val noteId = savedStateHandle.get<String>("noteId")
 
@@ -59,6 +63,11 @@ class NoteDetailsViewModel(
             is NoteDetailsAction.OnDiscardNoteDetailsClick -> onDiscardNoteClick()
             is NoteDetailsAction.OnCloseClick,
             is NoteDetailsAction.OnBacK-> onCloseClick()
+            is NoteDetailsAction.OnEditModeClick -> switchToEditMode()
+            is NoteDetailsAction.OnReaderModeClick -> switchToReaderMode()
+            is NoteDetailsAction.OnViewModeClick -> switchToViewMode()
+            is NoteDetailsAction.OnReaderScreenTap -> onReaderScreenTap()
+            is NoteDetailsAction.OnReaderScrollStart -> onReaderScrollStart()
         }
     }
 
@@ -86,7 +95,10 @@ class NoteDetailsViewModel(
                             contentText = note.content,
                             originalText = note.title,
                             originalContext = note.content,
+                            createdAt = note.createdAt,
+                            lastEditAt = note.lastEditAt,
                             saveStatus = note.saveStatus,
+                            screenMode = ScreenMode.View, // Default to View mode when loading an existing note
                         )
                     }
                 }
@@ -101,12 +113,95 @@ class NoteDetailsViewModel(
         }
     }
 
+    private fun switchToViewMode() {
+        _state.update {
+            it.copy(
+                screenMode = ScreenMode.View
+            )
+        }
 
-    private fun onCloseClick() {
-        if (hasNoteChanges()) {
-            showDiscardConfirmationDialog()
+        // If we are switching to view mode, we reset the reader mode orientation
+        if (state.value.isReaderMode) {
+            viewModelScope.launch {
+                eventChannel.send(NoteDetailsEvent.ResetOrientation)
+            }
+        }
+    }
+
+    private fun switchToReaderMode() {
+        _state.update {
+            it.copy(
+                screenMode = ScreenMode.Reader,
+                isReaderUiVisible = false
+            )
+        }
+
+        // When switching to reader mode, we request landscape orientation
+        viewModelScope.launch {
+            eventChannel.send(NoteDetailsEvent.RequestLandscapeOrientation)
+        }
+    }
+
+    private fun switchToEditMode() {
+        _state.update {
+            it.copy(
+                screenMode = ScreenMode.Edit
+            )
+        }
+    }
+
+    private fun onReaderScreenTap() {
+        val currentState = state.value
+        if (currentState.isReaderMode && currentState.isReaderUiVisible) {
+            hideReaderUi()
         } else {
-            handleEmptyNoteAndNavigateBack()
+            showReaderUi()
+            startAutoHideReaderUiTimer()
+        }
+    }
+
+    private fun onReaderScrollStart() {
+        val currentState = state.value
+        // When scrolling starts, we hide the reader UI to avoid distractions
+        if (currentState.isReaderMode && currentState.isReaderUiVisible) {
+            hideReaderUi()
+        }
+    }
+
+    private fun showReaderUi() {
+        _state.update {
+            it.copy(
+                isReaderUiVisible = true
+            )
+        }
+    }
+
+    private fun startAutoHideReaderUiTimer() {
+        autoHideJob?.cancel() // Cancel any existing job
+        autoHideJob = viewModelScope.launch {
+            delay(5000) // Auto-hide after 5 seconds
+            hideReaderUi()
+        }
+    }
+
+    private fun hideReaderUi() {
+        autoHideJob?.cancel()
+        _state.update {
+            it.copy(
+                isReaderUiVisible = false
+            )
+        }
+    }
+    private fun onCloseClick() {
+        when (state.value.screenMode) {
+            ScreenMode.Edit -> {
+                if (hasNoteChanges()) {
+                    showDiscardConfirmationDialog()
+                } else {
+                    handleEmptyNoteAndNavigateBack()
+                }
+            }
+            ScreenMode.Reader, ScreenMode.View -> handleEmptyNoteAndNavigateBack()
         }
     }
 
@@ -185,15 +280,28 @@ class NoteDetailsViewModel(
                 id = currentState.id, // We can get it from the state
                 title = currentState.titleText,
                 content = currentState.contentText,
-                createdAt = Clock.System.now(),
+                createdAt = if (currentState.id.isEmpty()) {
+                    Clock.System.now() // If it's a new note, set createdAt to now
+                } else {
+                    currentState.createdAt // Otherwise, keep the original createdAt
+                },
                 lastEditAt = Clock.System.now(),
                 saveStatus = NoteSaveStatus.FINAL
             )
 
-
-
             when (noteRepository.createNote(note = note)) {
                 is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            id = note.id, // Update the state with the new note ID
+                            originalText = note.title,
+                            originalContext = note.content,
+                            createdAt = note.createdAt,
+                            lastEditAt = note.lastEditAt,
+                            saveStatus = note.saveStatus,
+                            screenMode = ScreenMode.View // Switch to view mode after saving
+                        )
+                    }
                     eventChannel.send(NoteDetailsEvent.NoteDetailsSuccessfullySaved)
                 }
                 is Result.Error -> {
@@ -207,5 +315,10 @@ class NoteDetailsViewModel(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        autoHideJob?.cancel()
     }
 }

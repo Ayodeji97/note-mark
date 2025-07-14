@@ -7,3 +7,4 @@ sealed interface ScreenMode {
 
     data object Reader : ScreenMode
 }
+

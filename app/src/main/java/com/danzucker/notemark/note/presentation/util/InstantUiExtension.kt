@@ -10,7 +10,7 @@ import kotlin.time.Instant
 import kotlin.time.toJavaInstant
 
 
-fun Instant.toReadableTime(): String {
+fun Instant.toReadableDate(): String {
     val zonedDateTime = this.toJavaInstant().atZone(ZoneId.systemDefault())
     val currentYear = LocalDate.now().year
 
@@ -21,4 +21,11 @@ fun Instant.toReadableTime(): String {
         // Format for previous years: "19 Apr 2024"
         zonedDateTime.format(DateTimeFormatter.ofPattern("d MMM yyyy"))
     }
+}
+
+
+fun Instant.toReadableDateTime(): String {
+    val zonedDateTime = this.toJavaInstant().atZone(ZoneId.systemDefault())
+
+    return zonedDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"))
 }

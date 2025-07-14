@@ -62,4 +62,6 @@
     <string name="all_notes">All notes</string>
     <string name="edit_botton">Edit Button</string>
     <string name="read_botton">Read Button</string>
+    <string name="date_created">Date created</string>
+    <string name="date_last_edited">Last edited</string>
 </resources>

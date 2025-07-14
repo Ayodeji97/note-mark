@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.danzucker.notemark.note.presentation.notedetails
 
 import androidx.compose.foundation.background
@@ -32,6 +34,8 @@ import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.textfields.TransparentTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteDetailsMetaData
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
 fun NoteDetailsLandScapeContent(
@@ -79,7 +83,10 @@ fun NoteDetailsLandScapeContent(
                 thickness = 0.5.dp
             )
 
-            NoteDetailsMetaData()
+            NoteDetailsMetaData(
+                dateCreatedTimeText = state.formattedCreatedAt,
+                lastEditedTimeText = state.formattedLastEditAt
+            )
 
             HorizontalDivider(
                 thickness = 0.5.dp
@@ -121,7 +128,10 @@ private fun NoteDetailsLandScapeContentPreview() {
         }
         val focusManager = LocalFocusManager.current
         NoteDetailsLandScapeContent(
-            state = NoteDetailsState(),
+            state = NoteDetailsState(
+                titleText = "Sample Note Title",
+                contentText = "This is a sample note content for landscape mode."
+            ),
             onAction = {},
             modifier = Modifier
             .fillMaxSize()

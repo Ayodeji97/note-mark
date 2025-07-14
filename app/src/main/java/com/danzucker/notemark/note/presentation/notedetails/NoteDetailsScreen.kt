@@ -1,12 +1,22 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.danzucker.notemark.note.presentation.notedetails
 
+import android.content.pm.ActivityInfo
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Close
@@ -16,10 +26,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -35,8 +48,14 @@ import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.Companion.fromWindowSizeClass
 import com.danzucker.notemark.note.components.NoteListAlertDialog
 import com.danzucker.notemark.note.components.SaveNoteButton
+import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteMarkDetailsBottomAppBar
+import com.danzucker.notemark.note.presentation.notedetails.screenMode.ScreenMode
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import org.koin.androidx.compose.koinViewModel
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
 fun NoteDetailsRoot(
@@ -46,7 +65,9 @@ fun NoteDetailsRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
-    ObserveAsEvents(viewModel.events) { event ->
+    val activity = context as ComponentActivity
+
+    ObserveAsEvents(flow = viewModel.events) { event ->
         when (event) {
             NoteDetailsEvent.NoteDetailsSuccessfullySaved,
             NoteDetailsEvent.NavigateBack -> onNavigateBack()
@@ -58,6 +79,14 @@ fun NoteDetailsRoot(
                     Toast.LENGTH_LONG
                 ).show()
                 onNavigateBack()
+            }
+
+            NoteDetailsEvent.RequestLandscapeOrientation -> {
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+
+            NoteDetailsEvent.ResetOrientation -> {
+                activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             }
         }
     }
@@ -80,64 +109,107 @@ fun NoteDetailsScreen(
     ) {
         onAction(NoteDetailsAction.OnBacK)
     }
+
+    val scrollState = rememberScrollState()
+
+    // Plan to move this logic to viewModel to handle scroll state more effectively
+    LaunchedEffect(scrollState) {
+        snapshotFlow { scrollState.isScrollInProgress }
+            .distinctUntilChanged()
+            .filter { it } // Only trigger when scrolling starts
+            .collect {
+                if (state.isReaderMode) {
+                    onAction(NoteDetailsAction.OnReaderScrollStart)
+                }
+            }
+    }
+
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         topBar = {
-            if (state.isViewMode) {
-                NoteMarkTopAppBar(
-                    modifier = Modifier.offset { IntOffset(x = (-16), y = 0) },
-                    title = stringResource(R.string.all_notes).uppercase(),
-                    titleTextSize = fontSizeMedium16,
-                    titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    titleTextOffset = IntOffset(x = (-16), y = 0),
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { onAction(NoteDetailsAction.OnBacK) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
-                                contentDescription = stringResource(R.string.navigate_back),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                )
-            } else {
-                NoteMarkTopAppBar(
-                    navigationIcon = {
-                        IconButton(
-                            onClick = { onAction(NoteDetailsAction.OnCloseClick) }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.close_note),
-                            )
-                        }
-                    },
-                    actionContent = {
-                        SaveNoteButton(
-                            text = stringResource(R.string.save_note).uppercase(),
-                            onClick = { onAction(NoteDetailsAction.OnSaveClick) }
+            AnimatedVisibility(
+                visible = when {
+                    state.isReaderMode -> state.isReaderUiVisible
+                    else -> true
+                },
+                enter = fadeIn(animationSpec = tween(delayMillis = 300)),
+                exit = fadeOut(animationSpec = tween(delayMillis = 300))
+            ) {
+
+                when {
+                    state.isReaderMode || state.isViewMode -> {
+                        NoteMarkTopAppBar(
+                            modifier = Modifier.offset { IntOffset(x = (-16), y = 0) },
+                            title = stringResource(R.string.all_notes).uppercase(),
+                            titleTextSize = fontSizeMedium16,
+                            titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            titleTextOffset = IntOffset(x = (-16), y = 0),
+                            navigationIcon = {
+                                IconButton(
+                                    onClick = { onAction(NoteDetailsAction.OnBacK) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
+                                        contentDescription = stringResource(R.string.navigate_back),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
                         )
                     }
-                )
+
+                    else -> {
+                        NoteMarkTopAppBar(
+                            navigationIcon = {
+                                IconButton(
+                                    onClick = { onAction(NoteDetailsAction.OnCloseClick) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = stringResource(R.string.close_note),
+                                    )
+                                }
+                            },
+                            actionContent = {
+                                SaveNoteButton(
+                                    text = stringResource(R.string.save_note).uppercase(),
+                                    onClick = { onAction(NoteDetailsAction.OnSaveClick) }
+                                )
+                            }
+                        )
+                    }
+                }
             }
         },
         bottomBar = {
-            NoteMarkDetailsBottomAppBar(
-                modifier = Modifier
-                    .padding(
-                        bottom = WindowInsets
-                            .navigationBars
-                            .asPaddingValues()
-                            .calculateBottomPadding()
-                    ),
-                isEditModeSelected = false,
-                isReadModeSelected = false,
-                onEditModeClick = {},
-                onReadModeClick = {},
-            )
+            AnimatedVisibility(
+                visible = when {
+                    state.isReaderMode -> state.isReaderUiVisible
+                    state.isEditMode -> false
+                    else -> true
+                },
+                enter = fadeIn(animationSpec = tween(delayMillis = 300)),
+                exit = fadeOut(animationSpec = tween(delayMillis = 300))
+            ) {
+                NoteMarkDetailsBottomAppBar(
+                    modifier = Modifier
+                        .padding(
+                            bottom = WindowInsets
+                                .navigationBars
+                                .asPaddingValues()
+                                .calculateBottomPadding()
+                        ),
+                    isEditModeSelected = state.isEditMode,
+                    isReadModeSelected = state.isReaderMode,
+                    onEditModeClick = {
+                        onAction(NoteDetailsAction.OnEditModeClick)
+                    },
+                    onReadModeClick = {
+                        onAction(NoteDetailsAction.OnReaderModeClick)
+                    }
+                )
+            }
         }
     ) { innerPadding ->
 
@@ -147,14 +219,24 @@ fun NoteDetailsScreen(
         val focusManager = LocalFocusManager.current
 
         val windowClass = currentWindowAdaptiveInfo().windowSizeClass
+
+        val contentModifier = if (state.isReaderMode) {
+            Modifier
+                .padding(innerPadding)
+                .pointerInput(Unit) {
+                    detectTapGestures { onAction(NoteDetailsAction.OnReaderScreenTap) }
+                }
+        } else {
+            Modifier.padding(innerPadding)
+        }
+
         when (fromWindowSizeClass(windowSizeClass = windowClass)) {
             MOBILE_PORTRAIT -> NoteDetailsPortraitContent(
                 state = state,
                 onAction = onAction,
                 descriptionFocusRequester = descriptionFocusRequester,
                 focusManager = focusManager,
-                modifier = Modifier
-                    .padding(innerPadding)
+                modifier = contentModifier
             )
 
             MOBILE_LANDSCAPE -> NoteDetailsLandScapeContent(
@@ -162,8 +244,7 @@ fun NoteDetailsScreen(
                 onAction = onAction,
                 descriptionFocusRequester = descriptionFocusRequester,
                 focusManager = focusManager,
-                modifier = Modifier
-                    .padding(innerPadding)
+                modifier = contentModifier
             )
 
             TABLET_PORTRAIT -> Unit
@@ -194,7 +275,15 @@ fun NoteDetailsScreen(
 private fun NoteDetailsScreenPreview() {
     NoteMarkTheme {
         NoteDetailsScreen(
-            state = NoteDetailsState(),
+            state = NoteDetailsState(
+                titleText = "Sample Note",
+                contentText = "This is a sample note content for preview purposes.",
+                originalText = "Sample Note",
+                originalContext = "This is a sample note content for preview purposes.",
+                createdAt = Instant.parse("2023-10-01T12:00:00Z"),
+                lastEditAt = Instant.parse("2023-10-01T12:30:00Z"),
+                saveStatus = NoteSaveStatus.DRAFT
+            ),
             onAction = {}
         )
     }

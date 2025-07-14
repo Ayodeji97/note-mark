@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.danzucker.notemark.note.presentation.notedetails
 
 import androidx.compose.foundation.background
@@ -29,6 +31,8 @@ import com.danzucker.notemark.core.presentation.designsystem.textfields.Transpar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.util.negativePadding
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteDetailsMetaData
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
 fun NoteDetailsPortraitContent(
@@ -78,7 +82,10 @@ fun NoteDetailsPortraitContent(
             modifier = Modifier.negativePadding(horizontal = 16.dp)
         )
 
-        NoteDetailsMetaData()
+        NoteDetailsMetaData(
+            dateCreatedTimeText = state.formattedCreatedAt,
+            lastEditedTimeText = state.formattedLastEditAt
+        )
 
         HorizontalDivider(
             thickness = 0.5.dp,
@@ -110,6 +117,7 @@ fun NoteDetailsPortraitContent(
     }
 }
 
+
 @Preview
 @Composable
 private fun NoteDetailsPortraitContentPreview() {
@@ -119,7 +127,12 @@ private fun NoteDetailsPortraitContentPreview() {
         }
         val focusManager = LocalFocusManager.current
         NoteDetailsPortraitContent(
-            state = NoteDetailsState(),
+            state = NoteDetailsState(
+                titleText = "Sample Note Title",
+                contentText = "This is a sample note content. You can edit this text to see how it looks in the note details screen.",
+                createdAt = Instant.parse("2023-10-01T12:00:00Z"),
+                lastEditAt = Instant.parse("2023-10-01T12:30:00Z")
+            ),
             onAction = {},
             modifier = Modifier
                 .fillMaxSize()
