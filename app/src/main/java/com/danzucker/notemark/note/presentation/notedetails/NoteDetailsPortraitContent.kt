@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.danzucker.notemark.note.presentation.notedetails
 
 import androidx.compose.foundation.background
@@ -29,6 +31,8 @@ import com.danzucker.notemark.core.presentation.designsystem.textfields.Transpar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.util.negativePadding
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteDetailsMetaData
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 @Composable
 fun NoteDetailsPortraitContent(
@@ -38,6 +42,7 @@ fun NoteDetailsPortraitContent(
     focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {
+    val isEditable = state.isEditMode
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -53,7 +58,9 @@ fun NoteDetailsPortraitContent(
         TransparentTextField(
             text = state.titleText,
             onValueChange = {
-                onAction(NoteDetailsAction.OnTitleTextChange(it))
+                if (isEditable) {
+                    onAction(NoteDetailsAction.OnTitleTextChange(it))
+                }
             },
             modifier = Modifier
                 .fillMaxWidth(),
@@ -61,16 +68,24 @@ fun NoteDetailsPortraitContent(
             textStyle = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    descriptionFocusRequester.requestFocus()
-                }
-            )
+            readOnly = !isEditable, // Make title read-only if not in edit mode
+            keyboardOptions = if (isEditable) {
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
+            } else {
+                KeyboardOptions.Default
+            },
+            keyboardActions = if (isEditable) {
+                KeyboardActions(
+                    onNext = {
+                        descriptionFocusRequester.requestFocus()
+                    }
+                )
+            } else {
+                KeyboardActions.Default
+            }
         )
 
         HorizontalDivider(
@@ -78,7 +93,10 @@ fun NoteDetailsPortraitContent(
             modifier = Modifier.negativePadding(horizontal = 16.dp)
         )
 
-        NoteDetailsMetaData()
+        NoteDetailsMetaData(
+            dateCreatedTimeText = state.formattedCreatedAt,
+            lastEditedTimeText = state.formattedLastEditAt
+        )
 
         HorizontalDivider(
             thickness = 0.5.dp,
@@ -88,27 +106,38 @@ fun NoteDetailsPortraitContent(
         TransparentTextField(
             text = state.contentText,
             onValueChange = {
-                onAction(NoteDetailsAction.OnContentTextChange(it))
+                if (isEditable) {
+                    onAction(NoteDetailsAction.OnContentTextChange(it))
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(descriptionFocusRequester),
             placeholder = stringResource(R.string.note_description_placeholder),
             textStyle = MaterialTheme.typography.bodySmall,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onAction(NoteDetailsAction.OnSaveClick)
-                    focusManager.clearFocus()
-                }
-            )
+            readOnly = !isEditable, // Make content read-only if not in edit mode
+            keyboardOptions = if (isEditable) {
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
+            } else {
+                KeyboardOptions.Default
+            },
+            keyboardActions = if (isEditable) {
+                KeyboardActions(
+                    onDone = {
+                        onAction(NoteDetailsAction.OnSaveClick)
+                        focusManager.clearFocus()
+                    }
+                )
+            } else {
+                KeyboardActions.Default
+            }
         )
     }
 }
+
 
 @Preview
 @Composable
@@ -119,7 +148,12 @@ private fun NoteDetailsPortraitContentPreview() {
         }
         val focusManager = LocalFocusManager.current
         NoteDetailsPortraitContent(
-            state = NoteDetailsState(),
+            state = NoteDetailsState(
+                titleText = "Sample Note Title",
+                contentText = "This is a sample note content. You can edit this text to see how it looks in the note details screen.",
+                createdAt = Instant.parse("2023-10-01T12:00:00Z"),
+                lastEditAt = Instant.parse("2023-10-01T12:30:00Z")
+            ),
             onAction = {},
             modifier = Modifier
                 .fillMaxSize()

@@ -8,4 +8,9 @@ sealed interface NoteDetailsAction {
     data object OnKeepEditingClick : NoteDetailsAction
     data object OnDiscardNoteDetailsClick : NoteDetailsAction
     data object OnBacK : NoteDetailsAction
+    data object OnViewModeClick : NoteDetailsAction
+    data object OnEditModeClick : NoteDetailsAction
+    data object OnReaderModeClick : NoteDetailsAction
+    data object OnReaderScreenTap : NoteDetailsAction
+    data object OnReaderScrollStart : NoteDetailsAction
 }

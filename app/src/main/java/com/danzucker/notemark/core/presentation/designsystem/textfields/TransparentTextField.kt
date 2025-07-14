@@ -29,6 +29,7 @@ fun TransparentTextField(
     ),
     cursorColor: Color = MaterialTheme.colorScheme.primary,
     singleLine: Boolean = false,
+    readOnly: Boolean = false,
     maxLines: Int = Int.MAX_VALUE,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -44,6 +45,7 @@ fun TransparentTextField(
         cursorBrush = SolidColor(cursorColor),
         singleLine = singleLine,
         maxLines = maxLines,
+        readOnly = readOnly,
         decorationBox = { innerTextField ->
             Box(
                 contentAlignment = Alignment.CenterStart

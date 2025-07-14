@@ -4,6 +4,7 @@
 
 package com.danzucker.notemark.core.presentation.designsystem.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontS
 fun NoteMarkTopAppBar(
     modifier: Modifier = Modifier,
     title: String? = null,
+    onTitleClick: () -> Unit = {},
     titleTextSize: TextUnit = fontSizeMediumLarge20,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
     titleTextOffset: IntOffset = IntOffset(0, 0),
@@ -52,6 +54,9 @@ fun NoteMarkTopAppBar(
                         .offset {
                             titleTextOffset
                         }
+                        .clickable(
+                            onClick = onTitleClick
+                        )
                 )
             }
         },

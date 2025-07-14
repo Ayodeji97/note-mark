@@ -3,7 +3,7 @@
 package com.danzucker.notemark.note.models
 
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
-import com.danzucker.notemark.note.presentation.util.toReadableTime
+import com.danzucker.notemark.note.presentation.util.toReadableDate
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
@@ -16,8 +16,8 @@ data class NoteUi(
     val saveStatus: NoteSaveStatus
 ) {
     val formattedCreatedAt: String
-        get() = createdAt.toReadableTime()
+        get() = createdAt.toReadableDate()
 
     val formattedLastEditAt: String
-        get() = lastEditAt.toReadableTime()
+        get() = lastEditAt.toReadableDate()
 }
