@@ -5,6 +5,8 @@ package com.danzucker.notemark.note.presentation.util
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import kotlin.time.toJavaInstant
@@ -28,4 +30,9 @@ fun Instant.toReadableDateTime(): String {
     val zonedDateTime = this.toJavaInstant().atZone(ZoneId.systemDefault())
 
     return zonedDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"))
+}
+
+fun Instant.isLessThanFiveMinutes(): Boolean {
+    val timePassed = Clock.System.now() - this
+    return timePassed < 5.minutes
 }

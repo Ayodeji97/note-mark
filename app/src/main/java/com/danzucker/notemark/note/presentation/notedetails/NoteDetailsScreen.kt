@@ -142,6 +142,7 @@ fun NoteDetailsScreen(
                         NoteMarkTopAppBar(
                             modifier = Modifier.offset { IntOffset(x = (-16), y = 0) },
                             title = stringResource(R.string.all_notes).uppercase(),
+                            onTitleClick = { onAction(NoteDetailsAction.OnBacK) },
                             titleTextSize = fontSizeMedium16,
                             titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             titleTextOffset = IntOffset(x = (-16), y = 0),

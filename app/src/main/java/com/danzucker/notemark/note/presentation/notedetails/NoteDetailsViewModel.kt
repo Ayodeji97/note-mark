@@ -62,9 +62,14 @@ class NoteDetailsViewModel(
             is NoteDetailsAction.OnKeepEditingClick -> hideDiscardConfirmationDialog()
             is NoteDetailsAction.OnDiscardNoteDetailsClick -> onDiscardNoteClick()
             is NoteDetailsAction.OnCloseClick,
-            is NoteDetailsAction.OnBacK-> onCloseClick()
+            is NoteDetailsAction.OnBacK -> onCloseClick()
+
             is NoteDetailsAction.OnEditModeClick -> switchToEditMode()
-            is NoteDetailsAction.OnReaderModeClick -> switchToReaderMode()
+            is NoteDetailsAction.OnReaderModeClick -> if (state.value.isReaderMode) {
+                switchToViewMode()
+            } else {
+                switchToReaderMode()
+            }
             is NoteDetailsAction.OnViewModeClick -> switchToViewMode()
             is NoteDetailsAction.OnReaderScreenTap -> onReaderScreenTap()
             is NoteDetailsAction.OnReaderScrollStart -> onReaderScrollStart()
@@ -85,7 +90,7 @@ class NoteDetailsViewModel(
         }
 
         viewModelScope.launch {
-           when (val noteResult = noteRepository.getNoteById(noteId)) {
+            when (val noteResult = noteRepository.getNoteById(noteId)) {
                 is Result.Success -> {
                     val note = noteResult.data
                     _state.update {
@@ -98,10 +103,15 @@ class NoteDetailsViewModel(
                             createdAt = note.createdAt,
                             lastEditAt = note.lastEditAt,
                             saveStatus = note.saveStatus,
-                            screenMode = ScreenMode.View, // Default to View mode when loading an existing note
+                            screenMode = if (note.saveStatus == NoteSaveStatus.DRAFT) {
+                                ScreenMode.Edit // Switch to Edit mode if it's a draft note
+                            } else {
+                                ScreenMode.View // Default to View mode when loading an existing note
+                            }
                         )
                     }
                 }
+
                 is Result.Error -> {
                     _state.update {
                         it.copy(
@@ -114,17 +124,17 @@ class NoteDetailsViewModel(
     }
 
     private fun switchToViewMode() {
-        _state.update {
-            it.copy(
-                screenMode = ScreenMode.View
-            )
-        }
-
         // If we are switching to view mode, we reset the reader mode orientation
         if (state.value.isReaderMode) {
             viewModelScope.launch {
                 eventChannel.send(NoteDetailsEvent.ResetOrientation)
             }
+        }
+
+        _state.update {
+            it.copy(
+                screenMode = ScreenMode.View
+            )
         }
     }
 
@@ -192,6 +202,7 @@ class NoteDetailsViewModel(
             )
         }
     }
+
     private fun onCloseClick() {
         when (state.value.screenMode) {
             ScreenMode.Edit -> {
@@ -207,25 +218,35 @@ class NoteDetailsViewModel(
 
     private fun handleEmptyNoteAndNavigateBack() {
         viewModelScope.launch {
-            if (!hasEmptyNoteTitleAndContent() && isDraftNote()) {
+            val currentState = state.value
+            if (!hasEmptyNoteTitleAndContent() && currentState.isDraft) {
                 // We don't want to save an empty note or a draft note, so we navigate back
-                noteRepository.deleteNote(state.value.id)
+                noteRepository.deleteNote(currentState.id)
             }
-            eventChannel.send(NoteDetailsEvent.NavigateBack)
+            if (currentState.isViewMode || currentState.isReaderMode) {
+                // If we are in view or reader mode, we just navigate back
+                eventChannel.send(NoteDetailsEvent.NavigateBack)
+            } else {
+                // If we are in edit mode, we switch to view mode
+                switchToViewMode()
+            }
+            if (currentState.showDiscardConfirmationDialog) {
+                hideDiscardConfirmationDialog()
+            }
         }
     }
 
     private fun onDiscardNoteClick() {
         viewModelScope.launch {
-            if (isDraftNote()) {
-                noteRepository.deleteNote(state.value.id)
+            val currentState = state.value
+            if (currentState.isDraft) {
+                noteRepository.deleteNote(currentState.id)
             }
-            eventChannel.send(NoteDetailsEvent.NavigateBack)
+            switchToViewMode()
+            if (currentState.showDiscardConfirmationDialog) {
+                hideDiscardConfirmationDialog()
+            }
         }
-    }
-
-    private fun isDraftNote(): Boolean {
-        return state.value.saveStatus == NoteSaveStatus.DRAFT
     }
 
     private fun hasNoteChanges(): Boolean {
@@ -254,7 +275,6 @@ class NoteDetailsViewModel(
             )
         }
     }
-
 
     private fun onTitleTextChange(text: String) {
         _state.update {
@@ -298,12 +318,12 @@ class NoteDetailsViewModel(
                             originalContext = note.content,
                             createdAt = note.createdAt,
                             lastEditAt = note.lastEditAt,
-                            saveStatus = note.saveStatus,
-                            screenMode = ScreenMode.View // Switch to view mode after saving
+                            saveStatus = note.saveStatus
                         )
                     }
-                    eventChannel.send(NoteDetailsEvent.NoteDetailsSuccessfullySaved)
+                    switchToViewMode()
                 }
+
                 is Result.Error -> {
                     _state.update {
                         it.copy(

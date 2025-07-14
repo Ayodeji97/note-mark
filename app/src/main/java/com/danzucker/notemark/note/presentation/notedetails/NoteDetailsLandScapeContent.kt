@@ -45,6 +45,7 @@ fun NoteDetailsLandScapeContent(
     focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {
+    val isEditable = state.isEditMode
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,15 +69,24 @@ fun NoteDetailsLandScapeContent(
                 textStyle = MaterialTheme.typography.titleLarge,
                 maxLines = 1,
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        descriptionFocusRequester.requestFocus()
-                    }
-                )
+                readOnly = !isEditable,
+                keyboardOptions = if (isEditable) {
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    )
+                } else {
+                    KeyboardOptions.Default
+                },
+                keyboardActions = if (isEditable) {
+                    KeyboardActions(
+                        onNext = {
+                            descriptionFocusRequester.requestFocus()
+                        }
+                    )
+                } else {
+                    KeyboardActions.Default
+                }
             )
 
             HorizontalDivider(
@@ -102,16 +112,25 @@ fun NoteDetailsLandScapeContent(
                     .focusRequester(descriptionFocusRequester),
                 placeholder = stringResource(R.string.note_description_placeholder),
                 textStyle = MaterialTheme.typography.bodySmall,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        onAction(NoteDetailsAction.OnSaveClick)
-                        focusManager.clearFocus()
-                    }
-                )
+                readOnly = !isEditable,
+                keyboardOptions = if (isEditable) {
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    )
+                } else {
+                    KeyboardOptions.Default
+                },
+                keyboardActions = if (isEditable) {
+                    KeyboardActions(
+                        onDone = {
+                            onAction(NoteDetailsAction.OnSaveClick)
+                            focusManager.clearFocus()
+                        }
+                    )
+                } else {
+                    KeyboardActions.Default
+                }
             )
         }
     }

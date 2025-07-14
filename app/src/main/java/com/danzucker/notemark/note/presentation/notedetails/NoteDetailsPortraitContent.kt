@@ -42,6 +42,7 @@ fun NoteDetailsPortraitContent(
     focusManager: FocusManager,
     modifier: Modifier = Modifier
 ) {
+    val isEditable = state.isEditMode
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -57,7 +58,9 @@ fun NoteDetailsPortraitContent(
         TransparentTextField(
             text = state.titleText,
             onValueChange = {
-                onAction(NoteDetailsAction.OnTitleTextChange(it))
+                if (isEditable) {
+                    onAction(NoteDetailsAction.OnTitleTextChange(it))
+                }
             },
             modifier = Modifier
                 .fillMaxWidth(),
@@ -65,16 +68,24 @@ fun NoteDetailsPortraitContent(
             textStyle = MaterialTheme.typography.titleLarge,
             maxLines = 1,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = {
-                    descriptionFocusRequester.requestFocus()
-                }
-            )
+            readOnly = !isEditable, // Make title read-only if not in edit mode
+            keyboardOptions = if (isEditable) {
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                )
+            } else {
+                KeyboardOptions.Default
+            },
+            keyboardActions = if (isEditable) {
+                KeyboardActions(
+                    onNext = {
+                        descriptionFocusRequester.requestFocus()
+                    }
+                )
+            } else {
+                KeyboardActions.Default
+            }
         )
 
         HorizontalDivider(
@@ -95,24 +106,34 @@ fun NoteDetailsPortraitContent(
         TransparentTextField(
             text = state.contentText,
             onValueChange = {
-                onAction(NoteDetailsAction.OnContentTextChange(it))
+                if (isEditable) {
+                    onAction(NoteDetailsAction.OnContentTextChange(it))
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(descriptionFocusRequester),
             placeholder = stringResource(R.string.note_description_placeholder),
             textStyle = MaterialTheme.typography.bodySmall,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    onAction(NoteDetailsAction.OnSaveClick)
-                    focusManager.clearFocus()
-                }
-            )
+            readOnly = !isEditable, // Make content read-only if not in edit mode
+            keyboardOptions = if (isEditable) {
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                )
+            } else {
+                KeyboardOptions.Default
+            },
+            keyboardActions = if (isEditable) {
+                KeyboardActions(
+                    onDone = {
+                        onAction(NoteDetailsAction.OnSaveClick)
+                        focusManager.clearFocus()
+                    }
+                )
+            } else {
+                KeyboardActions.Default
+            }
         )
     }
 }

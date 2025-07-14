@@ -6,6 +6,7 @@ import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.util.UiText
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import com.danzucker.notemark.note.presentation.notedetails.screenMode.ScreenMode
+import com.danzucker.notemark.note.presentation.util.isLessThanFiveMinutes
 import com.danzucker.notemark.note.presentation.util.toReadableDateTime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -28,15 +29,21 @@ data class NoteDetailsState(
 
 ) {
     val formattedCreatedAt: String
-        get() = createdAt.toReadableDateTime()
+        get() = if (createdAt.isLessThanFiveMinutes()) {
+            "Just now" // This can be localized if needed
+        } else {
+            createdAt.toReadableDateTime()
+        }
 
     val formattedLastEditAt: String
-        get() = if (lastEditAt == Clock.System.now()) {
+        get() = if (lastEditAt.isLessThanFiveMinutes()) {
             "Just now" // This can be localized if needed
         } else {
             lastEditAt.toReadableDateTime()
         }
 
+    val isDraft: Boolean
+        get() = saveStatus == NoteSaveStatus.DRAFT
     val isViewMode: Boolean
         get() = screenMode == ScreenMode.View
 
