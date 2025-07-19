@@ -70,6 +70,7 @@ class NoteDetailsViewModel(
             } else {
                 switchToReaderMode()
             }
+
             is NoteDetailsAction.OnViewModeClick -> switchToViewMode()
             is NoteDetailsAction.OnReaderScreenTap -> onReaderScreenTap()
             is NoteDetailsAction.OnReaderScrollStart -> onReaderScrollStart()
@@ -142,9 +143,11 @@ class NoteDetailsViewModel(
         _state.update {
             it.copy(
                 screenMode = ScreenMode.Reader,
-                isReaderUiVisible = false
+                isReaderUiVisible = true
             )
         }
+
+        startAutoHideReaderUiTimer()
 
         // When switching to reader mode, we request landscape orientation
         viewModelScope.launch {
@@ -185,7 +188,6 @@ class NoteDetailsViewModel(
             )
         }
     }
-
     private fun startAutoHideReaderUiTimer() {
         autoHideJob?.cancel() // Cancel any existing job
         autoHideJob = viewModelScope.launch {
@@ -193,7 +195,6 @@ class NoteDetailsViewModel(
             hideReaderUi()
         }
     }
-
     private fun hideReaderUi() {
         autoHideJob?.cancel()
         _state.update {
@@ -212,6 +213,7 @@ class NoteDetailsViewModel(
                     handleEmptyNoteAndNavigateBack()
                 }
             }
+
             ScreenMode.Reader, ScreenMode.View -> handleEmptyNoteAndNavigateBack()
         }
     }
@@ -243,9 +245,21 @@ class NoteDetailsViewModel(
                 noteRepository.deleteNote(currentState.id)
             }
             switchToViewMode()
+            restoreNoteDetails()
             if (currentState.showDiscardConfirmationDialog) {
                 hideDiscardConfirmationDialog()
             }
+        }
+    }
+
+    private fun restoreNoteDetails() {
+        val currentState = state.value
+        _state.update {
+            it.copy(
+                titleText = currentState.originalText,
+                contentText = currentState.originalContext,
+                showDiscardConfirmationDialog = false
+            )
         }
     }
 

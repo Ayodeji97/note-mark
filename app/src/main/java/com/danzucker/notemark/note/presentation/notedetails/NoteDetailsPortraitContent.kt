@@ -93,15 +93,17 @@ fun NoteDetailsPortraitContent(
             modifier = Modifier.negativePadding(horizontal = 16.dp)
         )
 
-        NoteDetailsMetaData(
-            dateCreatedTimeText = state.formattedCreatedAt,
-            lastEditedTimeText = state.formattedLastEditAt
-        )
+        if (state.isViewMode || state.isReaderMode) {
+            NoteDetailsMetaData(
+                dateCreatedTimeText = state.formattedCreatedAt,
+                lastEditedTimeText = state.formattedLastEditAt
+            )
 
-        HorizontalDivider(
-            thickness = 0.5.dp,
-            modifier = Modifier.negativePadding(horizontal = 16.dp)
-        )
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                modifier = Modifier.negativePadding(horizontal = 16.dp)
+            )
+        }
 
         TransparentTextField(
             text = state.contentText,

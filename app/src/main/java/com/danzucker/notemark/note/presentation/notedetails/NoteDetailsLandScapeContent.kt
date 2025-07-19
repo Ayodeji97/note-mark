@@ -5,11 +5,8 @@ package com.danzucker.notemark.note.presentation.notedetails
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,9 +30,11 @@ import androidx.compose.ui.unit.dp
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.presentation.designsystem.textfields.TransparentTextField
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
+import com.danzucker.notemark.note.components.SaveNoteButton
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteDetailsMetaData
+import com.danzucker.notemark.note.presentation.notedetails.components.NoteMarkDetailsBackNavigation
 import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+
 
 @Composable
 fun NoteDetailsLandScapeContent(
@@ -48,13 +47,11 @@ fun NoteDetailsLandScapeContent(
     val isEditable = state.isEditMode
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp), // Increased horizontal padding for better centering
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.6f) // Take 60% of available width
                 .verticalScroll(rememberScrollState()), // Allow scrolling if content is long
             horizontalAlignment = Alignment.Start, // Align text fields to start
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -93,14 +90,16 @@ fun NoteDetailsLandScapeContent(
                 thickness = 0.5.dp
             )
 
-            NoteDetailsMetaData(
-                dateCreatedTimeText = state.formattedCreatedAt,
-                lastEditedTimeText = state.formattedLastEditAt
-            )
+            if (state.isViewMode || state.isReaderMode) {
+                NoteDetailsMetaData(
+                    dateCreatedTimeText = state.formattedCreatedAt,
+                    lastEditedTimeText = state.formattedLastEditAt
+                )
 
-            HorizontalDivider(
-                thickness = 0.5.dp
-            )
+                HorizontalDivider(
+                    thickness = 0.5.dp
+                )
+            }
 
             TransparentTextField(
                 text = state.contentText,
