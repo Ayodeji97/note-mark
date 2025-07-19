@@ -14,14 +14,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -37,20 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.danzucker.notemark.R
-import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
-import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontSizeMedium16
 import com.danzucker.notemark.core.presentation.util.ObserveAsEvents
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.Companion.fromWindowSizeClass
 import com.danzucker.notemark.note.components.NoteListAlertDialog
-import com.danzucker.notemark.note.components.SaveNoteButton
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import com.danzucker.notemark.note.presentation.notedetails.components.NoteMarkDetailsBottomAppBar
-import com.danzucker.notemark.note.presentation.notedetails.screenMode.ScreenMode
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.koin.androidx.compose.koinViewModel
@@ -124,65 +113,10 @@ fun NoteDetailsScreen(
             }
     }
 
+
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-        topBar = {
-            AnimatedVisibility(
-                visible = when {
-                    state.isReaderMode -> state.isReaderUiVisible
-                    else -> true
-                },
-                enter = fadeIn(animationSpec = tween(delayMillis = 300)),
-                exit = fadeOut(animationSpec = tween(delayMillis = 300))
-            ) {
-
-                when {
-                    state.isReaderMode || state.isViewMode -> {
-                        NoteMarkTopAppBar(
-                            modifier = Modifier.offset { IntOffset(x = (-16), y = 0) },
-                            title = stringResource(R.string.all_notes).uppercase(),
-                            onTitleClick = { onAction(NoteDetailsAction.OnBacK) },
-                            titleTextSize = fontSizeMedium16,
-                            titleColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            titleTextOffset = IntOffset(x = (-16), y = 0),
-                            navigationIcon = {
-                                IconButton(
-                                    onClick = { onAction(NoteDetailsAction.OnBacK) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowLeft,
-                                        contentDescription = stringResource(R.string.navigate_back),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            }
-                        )
-                    }
-
-                    else -> {
-                        NoteMarkTopAppBar(
-                            navigationIcon = {
-                                IconButton(
-                                    onClick = { onAction(NoteDetailsAction.OnCloseClick) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Close,
-                                        contentDescription = stringResource(R.string.close_note),
-                                    )
-                                }
-                            },
-                            actionContent = {
-                                SaveNoteButton(
-                                    text = stringResource(R.string.save_note).uppercase(),
-                                    onClick = { onAction(NoteDetailsAction.OnSaveClick) }
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-        },
         bottomBar = {
             AnimatedVisibility(
                 visible = when {
@@ -214,25 +148,23 @@ fun NoteDetailsScreen(
         }
     ) { innerPadding ->
 
+        val windowClass = currentWindowAdaptiveInfo().windowSizeClass
         val descriptionFocusRequester = remember {
             FocusRequester()
         }
         val focusManager = LocalFocusManager.current
 
-        val windowClass = currentWindowAdaptiveInfo().windowSizeClass
-
         val contentModifier = if (state.isReaderMode) {
             Modifier
-                .padding(innerPadding)
                 .pointerInput(Unit) {
                     detectTapGestures { onAction(NoteDetailsAction.OnReaderScreenTap) }
                 }
         } else {
-            Modifier.padding(innerPadding)
+            Modifier
         }
 
         when (fromWindowSizeClass(windowSizeClass = windowClass)) {
-            MOBILE_PORTRAIT -> NoteDetailsPortraitContent(
+            MOBILE_PORTRAIT -> NoteDetailsPortraitContentRoot(
                 state = state,
                 onAction = onAction,
                 descriptionFocusRequester = descriptionFocusRequester,
@@ -240,17 +172,35 @@ fun NoteDetailsScreen(
                 modifier = contentModifier
             )
 
-            MOBILE_LANDSCAPE -> NoteDetailsLandScapeContent(
+            MOBILE_LANDSCAPE -> NoteDetailsLandScapeContentRoot(
+                state = state,
+                onAction = onAction,
+                descriptionFocusRequester = descriptionFocusRequester,
+                focusManager = focusManager,
+                modifier = contentModifier.padding(innerPadding)
+            )
+
+            TABLET_PORTRAIT -> NoteDetailsPortraitContentRoot(
                 state = state,
                 onAction = onAction,
                 descriptionFocusRequester = descriptionFocusRequester,
                 focusManager = focusManager,
                 modifier = contentModifier
             )
-
-            TABLET_PORTRAIT -> Unit
-            TABLET_LANDSCAPE -> Unit
-            DESKTOP -> Unit
+            TABLET_LANDSCAPE -> NoteDetailsLandScapeContentRoot(
+                state = state,
+                onAction = onAction,
+                descriptionFocusRequester = descriptionFocusRequester,
+                focusManager = focusManager,
+                modifier = contentModifier.padding(innerPadding)
+            )
+            DESKTOP -> NoteDetailsLandScapeContentRoot(
+                state = state,
+                onAction = onAction,
+                descriptionFocusRequester = descriptionFocusRequester,
+                focusManager = focusManager,
+                modifier = contentModifier.padding(innerPadding)
+            )
         }
 
         if (state.showDiscardConfirmationDialog) {
