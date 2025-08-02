@@ -37,6 +37,7 @@ class SettingsViewModel(
         when (action) {
             SettingsAction.OnBackClick -> Unit // Handle back click in root composable (SettingsRoot)
             SettingsAction.OnLogoutClick -> onLogout()
+            SettingsAction.OnSyncIntervalClick -> Unit
         }
     }
 

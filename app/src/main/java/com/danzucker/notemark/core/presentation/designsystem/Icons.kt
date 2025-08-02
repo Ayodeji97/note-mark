@@ -24,3 +24,21 @@ val EditIcon: ImageVector
 val ReadIcon: ImageVector
     @Composable
     get() = ImageVector.vectorResource(id = R.drawable.read)
+
+
+val CloudOffIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.cloud_off)
+
+val ClockIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.clock)
+
+val SyncDataIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.sync_data)
+
+val ChevronIcon: ImageVector
+    @Composable
+    get() = ImageVector.vectorResource(id = R.drawable.chevron)
+
