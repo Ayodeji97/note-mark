@@ -64,4 +64,7 @@
     <string name="read_botton">Read Button</string>
     <string name="date_created">Date created</string>
     <string name="date_last_edited">Last edited</string>
+    <string name="offline">Offline</string>
+    <string name="sync_interval">Sync interval</string>
+    <string name="sync_data">Sync Data</string>
 </resources>
