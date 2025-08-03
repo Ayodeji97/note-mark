@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
 import com.danzucker.notemark.note.domain.note.NoteRepository
+import com.danzucker.notemark.note.presentation.settings.util.SyncIntervalUi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -20,6 +22,7 @@ class SettingsViewModel(
     private var hasLoadedInitialData = false
 
     private val _state = MutableStateFlow(SettingsState())
+
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
@@ -35,9 +38,38 @@ class SettingsViewModel(
 
     fun onAction(action: SettingsAction) {
         when (action) {
-            SettingsAction.OnBackClick -> Unit // Handle back click in root composable (SettingsRoot)
-            SettingsAction.OnLogoutClick -> onLogout()
-            SettingsAction.OnSyncIntervalClick -> Unit
+            is SettingsAction.OnSyncIntervalClick -> toggleSyncIntervalDropdown()
+            is SettingsAction.OnBackClick -> Unit // Handle back click in root composable (SettingsRoot)
+            is SettingsAction.OnLogoutClick -> onLogout()
+            is SettingsAction.OnSyncIntervalItemSelected -> onSyncIntervalSelected(action.syncInterval)
+            is SettingsAction.OnDismissSyncIntervalDropdown -> dismissSyncIntervalDropdown()
+        }
+    }
+
+    private fun onSyncIntervalSelected(syncInterval: SyncIntervalUi) {
+        viewModelScope.launch {
+            // Save the selected sync interval to the repository or preferences
+            // Update the background sync interval in the note repository
+            //noteRepository.setBackgroundSyncInterval(syncInterval)
+            _state.update {
+                it.copy(
+                    syncIntervalText = syncInterval.title,
+                    selectedSyncInterval = syncInterval,
+                   // showSyncIntervalDropdown = false
+                )
+            }
+        }
+    }
+
+    private fun toggleSyncIntervalDropdown() {
+        _state.update {
+            it.copy(showSyncIntervalDropdown = !it.showSyncIntervalDropdown)
+        }
+    }
+
+    private fun dismissSyncIntervalDropdown() {
+        _state.update {
+            it.copy(showSyncIntervalDropdown = false)
         }
     }
 
