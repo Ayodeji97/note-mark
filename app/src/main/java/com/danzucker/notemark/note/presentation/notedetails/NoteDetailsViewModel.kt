@@ -102,7 +102,7 @@ class NoteDetailsViewModel(
                             originalText = note.title,
                             originalContext = note.content,
                             createdAt = note.createdAt,
-                            lastEditAt = note.lastEditAt,
+                            lastEditAt = note.lastEditedAt,
                             saveStatus = note.saveStatus,
                             screenMode = if (note.saveStatus == NoteSaveStatus.DRAFT) {
                                 ScreenMode.Edit // Switch to Edit mode if it's a draft note
@@ -319,11 +319,10 @@ class NoteDetailsViewModel(
                 } else {
                     currentState.createdAt // Otherwise, keep the original createdAt
                 },
-                lastEditAt = Clock.System.now(),
-                saveStatus = NoteSaveStatus.FINAL
+                lastEditedAt = Clock.System.now()
             )
 
-            when (noteRepository.createNote(note = note)) {
+            when (noteRepository.upsertNote(note = note)) {
                 is Result.Success -> {
                     _state.update {
                         it.copy(
@@ -331,7 +330,7 @@ class NoteDetailsViewModel(
                             originalText = note.title,
                             originalContext = note.content,
                             createdAt = note.createdAt,
-                            lastEditAt = note.lastEditAt,
+                            lastEditAt = note.lastEditedAt,
                             saveStatus = note.saveStatus
                         )
                     }

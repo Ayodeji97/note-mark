@@ -11,7 +11,9 @@ interface NoteRepository {
     fun getNotes(): Flow<List<Note>>
     suspend fun getNoteById(id: NoteId): Result<Note, DataError.Local>
     suspend fun fetchNotes(): EmptyResult<DataError>
-    suspend fun createNote(note: Note): EmptyResult<DataError>
+    suspend fun upsertNote(note: Note): EmptyResult<DataError>
+
+    suspend fun syncPendingNotes()
     suspend fun deleteNote(id: NoteId)
     suspend fun deleteDraftNotes()
     suspend fun deleteAllNotes()

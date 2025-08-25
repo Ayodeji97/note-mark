@@ -12,7 +12,7 @@ fun Note.toNoteUi(): NoteUi {
         title = title,
         content = content,
         createdAt = createdAt,
-        lastEditAt = lastEditAt,
+        lastEditAt = lastEditedAt,
         saveStatus = saveStatus
     )
 }
@@ -23,7 +23,7 @@ fun NoteUi.toNote(): Note {
         title = title,
         content = content,
         createdAt = createdAt,
-        lastEditAt = lastEditAt,
+        lastEditedAt = lastEditAt,
         saveStatus = saveStatus
     )
 }

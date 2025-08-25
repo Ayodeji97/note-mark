@@ -71,4 +71,13 @@
     <string name="sync_interval_15_minutes">15 minutes</string>
     <string name="sync_interval_30_minutes">30 minutes</string>
     <string name="sync_interval_1_hour">1 hour</string>
+    <string name="network_error_message">Not internet connection. Try again!</string>
+    <string name="error_message">Something went wrong, Try again!</string>
+    <string name="failed_to_sync_data">Failed to sync data, try again!</string>
+    <string name="never_synced">Never synced</string>
+    <string name="just_now">Just now</string>
+    <string name="minutes_ago">%d min ago</string>
+    <string name="hours_ago">%d hours ago</string>
+    <string name="days_ago">%d days ago</string>
+    <string name="offline_logout_message">You need an internet connection to log out.</string>
 </resources>

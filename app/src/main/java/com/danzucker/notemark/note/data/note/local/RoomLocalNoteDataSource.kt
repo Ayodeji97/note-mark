@@ -13,6 +13,7 @@ import com.danzucker.notemark.note.domain.note.model.Notes
 import com.danzucker.notemark.note.domain.note.local.NoteId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 

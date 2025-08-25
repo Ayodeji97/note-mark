@@ -15,4 +15,7 @@ val databaseModule = module {
     }
 
     single { get<NoteDatabase>().noteDao }
+    // NotePendingSyncDao is used to manage notes that are pending synchronization
+    // with the server, such as newly created notes or updates that haven't been synced yet.
+    single { get<NoteDatabase>().notePendingSyncDao }
 }

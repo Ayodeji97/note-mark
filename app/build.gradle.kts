@@ -78,6 +78,9 @@ dependencies {
     // DI - Koin
     implementation(libs.bundles.koin)
 
+    // WorkManager for background tasks
+    implementation(libs.androidx.work)
+
 
     // Kotlin Serialization for navigation
     implementation(libs.kotlinx.serialization.json)

@@ -8,3 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 val Context.authDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "auth_preferences"
 )
+
+val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "settings_preferences"
+)
