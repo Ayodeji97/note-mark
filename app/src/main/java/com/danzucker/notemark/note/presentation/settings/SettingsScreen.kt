@@ -1,5 +1,6 @@
 package com.danzucker.notemark.note.presentation.settings
 
+import android.R.attr.titleTextColor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -184,9 +185,9 @@ fun SettingsScreen(
             SettingsListItem(
                 title = stringResource(R.string.sync_data),
                 onItemClick = {
-                    onAction(SettingsAction.OnSyncIntervalClick)
+                    onAction(SettingsAction.OnSyncDataClick)
                 },
-                description = "Last sync: 12 min ago", // This should be dynamic based on the actual last sync time
+                description = "Last sync: ${(state.lastSyncTimestamp).asString()}", // This should be dynamic based on the actual last sync time
                 leadingIcon = {
                     Icon(
                         imageVector = SyncDataIcon,
