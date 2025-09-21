@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.danzucker.notemark.R
 import com.danzucker.notemark.core.data.networkchecker.DeviceNetworkChecker
+import com.danzucker.notemark.core.database.dao.NotePendingSyncDao
 import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
 import com.danzucker.notemark.core.domain.util.Result
 import com.danzucker.notemark.core.presentation.util.UiText
@@ -36,7 +37,8 @@ class SettingsViewModel(
     private val applicationScope: CoroutineScope,
     private val sessionStorage: SessionStorage,
     private val settingsPreferences: SettingsPreferences,
-    private val deviceNetworkChecker: DeviceNetworkChecker
+    private val deviceNetworkChecker: DeviceNetworkChecker,
+    private val notePendingSyncDao: NotePendingSyncDao
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -62,13 +64,15 @@ class SettingsViewModel(
         when (action) {
             is SettingsAction.OnSyncIntervalClick -> toggleSyncIntervalDropdown()
             is SettingsAction.OnBackClick -> Unit // Handle back click in root composable (SettingsRoot)
-            is SettingsAction.OnLogoutClick -> onLogout()
+            is SettingsAction.OnLogoutClick -> checkForUnsyncedChangesAndLogout()
             is SettingsAction.OnSyncIntervalItemSelected -> onSyncIntervalSelected(action.syncInterval)
             is SettingsAction.OnDismissSyncIntervalDropdown -> dismissSyncIntervalDropdown()
             SettingsAction.OnSyncDataClick -> onSyncDataClick()
+            SettingsAction.OnConfirmLogout -> proceedWithLogout()
+            SettingsAction.OnCancelLogout -> dismissLogoutDialog()
+            SettingsAction.OnSyncAndLogout -> syncAndLogout()
         }
     }
-
 
     private fun observeSettings() {
         combine(
@@ -129,7 +133,8 @@ class SettingsViewModel(
            _state.update {
                it.copy(
                    isSyncingData = false,
-                   showError = true
+                   showError = true,
+                   errorMessage = UiText.StringResourceWithArgs(R.string.network_error_message)
                )
            }
             return
@@ -168,6 +173,101 @@ class SettingsViewModel(
                     }
                 }
             }
+        }
+    }
+
+
+    private fun checkForUnsyncedChangesAndLogout() {
+        val isConnected = _state.value.isDeviceConnected
+        if (!isConnected) {
+            _state.update {
+                it.copy(
+                    showError = true,
+                    errorMessage = UiText.StringResourceWithArgs(R.string.offline_logout_message)
+                )
+            }
+            return
+        }
+
+        viewModelScope.launch {
+            // Check for unsynced changes
+            try {
+                val username = sessionStorage.get()?.username ?: return@launch
+                val pendingNotes = notePendingSyncDao.getAllNotePendingSyncEntities(username)
+                val deletedNotes = notePendingSyncDao.getAllDeletedNoteSyncEntities(username)
+
+                if (pendingNotes.isNotEmpty() || deletedNotes.isNotEmpty()) {
+                    // Show logout confirmation dialog
+                    _state.update {
+                        it.copy(
+                            showLogoutConfirmationDialog = true,
+                            showError = false
+                        )
+                    }
+                } else {
+                    // No unsynced changes, proceed with logout
+                    proceedWithLogout()
+                }
+            } catch (e: Exception) {
+                println("Error checking for unsynced changes: ${e.message}")
+               proceedWithLogout()
+            }
+
+        }
+    }
+
+    private fun syncAndLogout() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    isSyncingData = true,
+                    showLogoutConfirmationDialog = false
+                )
+            }
+
+            // Perform sync
+            noteRepository.syncPendingNotes()
+            noteRepository.fetchNotes()
+
+            // Proceed with logout
+            proceedWithLogout()
+        }
+    }
+
+    private fun proceedWithLogout() {
+        applicationScope.launch {
+            try {
+                noteRepository.deleteAllNotes()
+                noteRepository.logout()
+                sessionStorage.set(null)
+                settingsPreferences.clearSettings()
+                syncNoteScheduler.cancelAllSyncs()
+
+                _state.update {
+                    it.copy(
+                        isSyncingData = false,
+                        showError = false,
+                        showLogoutConfirmationDialog = false
+                    )
+                }
+            } catch (e: Exception) {
+                println("Error during logout: ${e.message}")
+                _state.update {
+                    it.copy(
+                        isSyncingData = false,
+                        showError = true,
+                        errorMessage = UiText.StringResourceWithArgs(R.string.error_message),
+                        showLogoutConfirmationDialog = false
+                    )
+                }
+            }
+
+        }
+    }
+
+    private fun dismissLogoutDialog() {
+        _state.update {
+            it.copy(showLogoutConfirmationDialog = false)
         }
     }
 

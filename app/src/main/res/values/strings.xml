@@ -81,4 +81,8 @@
     <string name="days_ago">%d days ago</string>
     <string name="offline_logout_message">You need an internet connection to log out.</string>
     <string name="last_sync">Last Sync: %s</string>
+    <string name="sync_now">Sync Now</string>
+    <string name="logout_without_syncing">Logout without Syncing</string>
+    <string name="unsync_title">Unsynced Changes</string>
+    <string name="unsync_message">You have unsynced changes. What would you like to do before logging out?</string>
 </resources>

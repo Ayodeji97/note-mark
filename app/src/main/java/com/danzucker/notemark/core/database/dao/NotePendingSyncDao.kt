@@ -10,8 +10,8 @@ import com.danzucker.notemark.core.database.entity.NotePendingSyncEntity
 interface NotePendingSyncDao {
 
     // CREATED NOTES
-    @Query("SELECT * FROM note_pending_sync WHERE noteId=:noteId")
-    suspend fun getAllNotePendingSyncEntities(noteId: String): List<NotePendingSyncEntity>
+    @Query("SELECT * FROM note_pending_sync WHERE userName=:username")
+    suspend fun getAllNotePendingSyncEntities(username: String): List<NotePendingSyncEntity>
 
     @Query("SELECT * FROM note_pending_sync WHERE noteId=:noteId")
     suspend fun getNotePendingSyncEntity(noteId: String): NotePendingSyncEntity?
@@ -24,8 +24,8 @@ interface NotePendingSyncDao {
 
 
     // DELETED NOTES
-    @Query("SELECT * FROM deleted_note_sync WHERE noteId=:userId")
-    suspend fun getAllDeletedNoteSyncEntities(userId: String): List<DeletedNoteSyncEntity>
+    @Query("SELECT * FROM deleted_note_sync WHERE username=:username")
+    suspend fun getAllDeletedNoteSyncEntities(username: String): List<DeletedNoteSyncEntity>
 
     @Upsert
     suspend fun upsertDeletedNoteSyncEntity(entity: DeletedNoteSyncEntity)

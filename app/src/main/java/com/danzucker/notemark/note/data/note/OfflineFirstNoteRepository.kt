@@ -265,11 +265,12 @@ class OfflineFirstNoteRepository(
 
         return when (remoteResult) {
             is Result.Success -> {
-                applicationScope.async {
-                    localNoteDataSource.upsertNote(remoteResult.data.copy(
-                        saveStatus = NoteSaveStatus.FINAL
-                    )).asEmptyDataResult()
-                }.await()
+//                applicationScope.async {
+//                    localNoteDataSource.upsertNote(remoteResult.data.copy(
+//                        saveStatus = NoteSaveStatus.FINAL
+//                    )).asEmptyDataResult()
+//                }.await()
+                Result.Success(Unit)
             }
 
             is Result.Error -> {

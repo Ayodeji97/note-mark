@@ -23,7 +23,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class NoteDetailsViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -32,6 +35,8 @@ class NoteDetailsViewModel(
 
     private var hasLoadedInitialData = false
     private var autoHideJob: Job? = null
+    private var autoSaveJob: Job? = null
+    private var editingStartTime: Instant? = null
 
     private val noteId = savedStateHandle.get<String>("noteId")
 
@@ -125,6 +130,8 @@ class NoteDetailsViewModel(
     }
 
     private fun switchToViewMode() {
+        // Finalize any ongoing editing
+        finalizeEditing()
         // If we are switching to view mode, we reset the reader mode orientation
         if (state.value.isReaderMode) {
             viewModelScope.launch {
@@ -140,6 +147,9 @@ class NoteDetailsViewModel(
     }
 
     private fun switchToReaderMode() {
+        // Finalize any ongoing editing
+        finalizeEditing()
+
         _state.update {
             it.copy(
                 screenMode = ScreenMode.Reader,
@@ -156,10 +166,80 @@ class NoteDetailsViewModel(
     }
 
     private fun switchToEditMode() {
+        // Start tracking editing time
+        editingStartTime = Clock.System.now()
         _state.update {
             it.copy(
                 screenMode = ScreenMode.Edit
             )
+        }
+    }
+
+    private fun finalizeEditing() {
+        // Stop tracking editing time
+        if (editingStartTime != null && hasNoteChanges()) {
+            val finalizationTime = Clock.System.now()
+            performSave(updateLastEditAt = finalizationTime, isFinal = false)
+        }
+        editingStartTime = null
+        autoSaveJob?.cancel()
+    }
+
+    private fun scheduleAutoSave() {
+        autoSaveJob?.cancel() // Cancel any existing job
+        // Schedule a new auto-save job with a delay
+        autoSaveJob = viewModelScope.launch {
+            delay(1000) // 2 seconds delay
+            if (hasNoteChanges() && !hasEmptyNoteTitleAndContent()) {
+                performSave(updateLastEditAt = null, isFinal = false) // Auto-save without updating lastEditAt
+            }
+        }
+    }
+
+    private fun performSave(updateLastEditAt: Instant?, isFinal: Boolean) {
+        viewModelScope.launch {
+            val currentState = state.value
+
+            val note = Note(
+                id = currentState.id, // We can get it from the state
+                title = currentState.titleText,
+                content = currentState.contentText,
+                createdAt = if (currentState.id.isEmpty()) {
+                    Clock.System.now() // If it's a new note, set createdAt to now
+                } else {
+                    currentState.createdAt // Otherwise, keep the original createdAt
+                },
+                lastEditedAt = updateLastEditAt ?: currentState.lastEditAt,
+                saveStatus = if (isFinal) NoteSaveStatus.FINAL else NoteSaveStatus.DRAFT
+            )
+
+            when (noteRepository.upsertNote(note = note)) {
+                is Result.Success -> {
+                    _state.update {
+                        it.copy(
+                            id = note.id, // Update the state with the new note ID
+                            originalText = if (isFinal) note.title else it.originalText,
+                            originalContext = if (isFinal) note.content else it.originalContext,
+                            createdAt = note.createdAt,
+                            lastEditAt = note.lastEditedAt,
+                            saveStatus = note.saveStatus
+                        )
+                    }
+                    delay(10.seconds)  // just to wait to see if the user will manually save
+                    switchToViewMode()
+                }
+
+                is Result.Error -> {
+                    if (isFinal) {
+                        _state.update {
+                            it.copy(
+                                errorText = UiText.StringResourceWithArgs(R.string.unable_to_save_note)
+                            )
+                        }
+                        eventChannel.send(NoteDetailsEvent.FailedToSaveNoteDetails)
+                    }
+                }
+            }
         }
     }
 
@@ -188,6 +268,7 @@ class NoteDetailsViewModel(
             )
         }
     }
+
     private fun startAutoHideReaderUiTimer() {
         autoHideJob?.cancel() // Cancel any existing job
         autoHideJob = viewModelScope.launch {
@@ -195,6 +276,7 @@ class NoteDetailsViewModel(
             hideReaderUi()
         }
     }
+
     private fun hideReaderUi() {
         autoHideJob?.cancel()
         _state.update {
@@ -221,10 +303,13 @@ class NoteDetailsViewModel(
     private fun handleEmptyNoteAndNavigateBack() {
         viewModelScope.launch {
             val currentState = state.value
-            if (!hasEmptyNoteTitleAndContent() && currentState.isDraft) {
+            finalizeEditing()
+
+            if (hasEmptyNoteTitleAndContent() && currentState.isDraft) {
                 // We don't want to save an empty note or a draft note, so we navigate back
                 noteRepository.deleteNote(currentState.id)
             }
+
             if (currentState.isViewMode || currentState.isReaderMode) {
                 // If we are in view or reader mode, we just navigate back
                 eventChannel.send(NoteDetailsEvent.NavigateBack)
@@ -296,6 +381,11 @@ class NoteDetailsViewModel(
                 titleText = text
             )
         }
+
+        // Schedule auto-save if in edit mode
+        if (state.value.isEditMode) {
+            scheduleAutoSave()
+        }
     }
 
     private fun onContentTextChange(text: String) {
@@ -304,54 +394,21 @@ class NoteDetailsViewModel(
                 contentText = text
             )
         }
+
+        // Schedule auto-save if in edit mode
+        if (state.value.isEditMode) {
+            scheduleAutoSave()
+        }
     }
 
     private fun onSaveClick() {
-        viewModelScope.launch {
-            val currentState = state.value
-
-            val note = Note(
-                id = currentState.id, // We can get it from the state
-                title = currentState.titleText,
-                content = currentState.contentText,
-                createdAt = if (currentState.id.isEmpty()) {
-                    Clock.System.now() // If it's a new note, set createdAt to now
-                } else {
-                    currentState.createdAt // Otherwise, keep the original createdAt
-                },
-                lastEditedAt = Clock.System.now()
-            )
-
-            when (noteRepository.upsertNote(note = note)) {
-                is Result.Success -> {
-                    _state.update {
-                        it.copy(
-                            id = note.id, // Update the state with the new note ID
-                            originalText = note.title,
-                            originalContext = note.content,
-                            createdAt = note.createdAt,
-                            lastEditAt = note.lastEditedAt,
-                            saveStatus = note.saveStatus
-                        )
-                    }
-                    switchToViewMode()
-                }
-
-                is Result.Error -> {
-                    _state.update {
-                        it.copy(
-                            errorText = UiText.StringResourceWithArgs(R.string.unable_to_save_note)
-                        )
-                    }
-                    // Optionally, you can handle navigation back or show an error
-                    eventChannel.send(NoteDetailsEvent.FailedToSaveNoteDetails)
-                }
-            }
-        }
+        performSave(updateLastEditAt = Clock.System.now(), isFinal = true)
+        switchToViewMode()
     }
 
     override fun onCleared() {
         super.onCleared()
         autoHideJob?.cancel()
+        autoSaveJob?.cancel()
     }
 }

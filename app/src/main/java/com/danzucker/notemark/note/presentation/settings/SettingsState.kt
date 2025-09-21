@@ -13,5 +13,6 @@ data class SettingsState(
     val isSyncingData: Boolean = false,
     val showNoInternetMessage: UiText = UiText.StringResourceWithArgs(R.string.network_error_message),
     val showError: Boolean = false,
-    val errorMessage: UiText = UiText.StringResourceWithArgs(R.string.error_message)
+    val errorMessage: UiText = UiText.StringResourceWithArgs(R.string.error_message),
+    val showLogoutConfirmationDialog: Boolean = false
 )
