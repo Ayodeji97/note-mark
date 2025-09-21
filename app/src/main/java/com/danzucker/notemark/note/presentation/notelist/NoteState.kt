@@ -9,4 +9,5 @@ data class NoteState(
     val isLoadingData: Boolean = true,
     val hasNotes: Boolean = false,
     val userProfileInitials: String = "",
+    val isDeviceConnected: Boolean = false,
 )

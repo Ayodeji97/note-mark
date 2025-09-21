@@ -1,12 +1,14 @@
 package com.danzucker.notemark.note.presentation.settings
 
-import androidx.compose.foundation.clickable
+import android.R.attr.titleTextColor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,8 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -31,10 +39,12 @@ import com.danzucker.notemark.core.presentation.designsystem.SyncDataIcon
 import com.danzucker.notemark.core.presentation.designsystem.components.NoteMarkTopAppBar
 import com.danzucker.notemark.core.presentation.designsystem.theme.NoteMarkTheme
 import com.danzucker.notemark.core.presentation.designsystem.values.Dimens.fontSizeMedium16
-import com.danzucker.notemark.core.presentation.util.negativePadding
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType
 import com.danzucker.notemark.core.presentation.util.screensize.DeviceScreenType.*
+import com.danzucker.notemark.note.components.NoteListAlertDialog
+import com.danzucker.notemark.note.presentation.notelist.NoteAction
 import com.danzucker.notemark.note.presentation.settings.components.SettingsListItem
+import com.danzucker.notemark.note.presentation.settings.components.SyncIntervalDropDownOptionMenu
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -71,8 +81,27 @@ fun SettingsScreen(
         MOBILE_LANDSCAPE,
         TABLET_LANDSCAPE,
         DESKTOP -> 40.dp
-
     }
+
+    val context = LocalContext.current
+    var dropDownOffset by remember {
+        mutableStateOf(IntOffset.Zero)
+    }
+
+    var syncIntervalTrailingContentWidth by remember {
+        mutableStateOf(IntOffset.Zero)
+    }
+
+    val configuration = LocalConfiguration.current
+    val dropDownMaxHeight = when (DeviceScreenType.fromWindowSizeClass(windowClass)) {
+        MOBILE_PORTRAIT,
+        TABLET_PORTRAIT -> (configuration.screenHeightDp * 0.3f).dp
+        MOBILE_LANDSCAPE,
+        TABLET_LANDSCAPE,
+        DESKTOP -> (configuration.screenHeightDp * 0.5f).dp
+    }
+
+
     Scaffold(
         modifier = Modifier
             .padding(start = contentPadding),
@@ -110,6 +139,13 @@ fun SettingsScreen(
 
             SettingsListItem(
                 title = stringResource(R.string.sync_interval),
+                modifier = Modifier
+                    .onSizeChanged {
+                        dropDownOffset = IntOffset(
+                            x = it.width - syncIntervalTrailingContentWidth.x, // Adjust the x offset based on the width of the trailing content
+                            y = it.height + 16.dp.value.toInt() // 16.dp is the vertical padding we added to the column
+                        )
+                    },
                 onItemClick = {
                     onAction(SettingsAction.OnSyncIntervalClick)
                 },
@@ -124,9 +160,16 @@ fun SettingsScreen(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(20.dp),
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .onSizeChanged {
+                                syncIntervalTrailingContentWidth = IntOffset(
+                                    x = it.width,
+                                    y = 0
+                                ) // Capture the width of the trailing content for dropdown positioning
+                            }
                     ) {
                         Text(
-                            text = state.syncIntervalText, // handle the text based on the selected sync interval
+                            text = state.syncIntervalText.asString(context), // handle the text based on the selected sync interval
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -146,17 +189,29 @@ fun SettingsScreen(
             SettingsListItem(
                 title = stringResource(R.string.sync_data),
                 onItemClick = {
-                    onAction(SettingsAction.OnSyncIntervalClick)
+                    if (!state.isSyncingData) {
+                        onAction(SettingsAction.OnSyncDataClick) // Trigger manual sync only if not already syncing
+                    }
+
                 },
-                description = "Last sync: 12 min ago", // This should be dynamic based on the actual last sync time
+                description = "Last sync: ${(state.lastSyncTimestamp).asString()}", // This should be dynamic based on the actual last sync time
                 leadingIcon = {
-                    Icon(
-                        imageVector = SyncDataIcon,
-                        contentDescription = stringResource(R.string.sync_data),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .padding(top = 4.dp) // Adjust padding to align with text
-                    )
+                    if (state.isSyncingData) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(top = 4.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Icon(
+                            imageVector = SyncDataIcon,
+                            contentDescription = stringResource(R.string.sync_data),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
                 },
                 verticalAlignment = Alignment.Top
             )
@@ -168,7 +223,7 @@ fun SettingsScreen(
             SettingsListItem(
                 title = stringResource(R.string.logout),
                 onItemClick = {
-                    onAction(SettingsAction.OnSyncIntervalClick)
+                    onAction(SettingsAction.OnLogoutClick)
                 },
                 titleTextColor = MaterialTheme.colorScheme.error,
                 leadingIcon = {
@@ -179,6 +234,65 @@ fun SettingsScreen(
                     )
                 }
             )
+
+            if (state.showError && !state.isDeviceConnected) {
+                Text(
+                    text = stringResource(R.string.offline_logout_message),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            if (state.showError && state.isDeviceConnected) {
+                Text(
+                    text = state.errorMessage.asString(context),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+
+            // Sync interval dropdown
+            if (state.showSyncIntervalDropdown) {
+                SyncIntervalDropDownOptionMenu(
+                    selectedInterval = state.selectedSyncInterval,
+                    onDismiss = {
+                        onAction(SettingsAction.OnDismissSyncIntervalDropdown)
+                    },
+                    onIntervalClick = { interval ->
+                        onAction(SettingsAction.OnSyncIntervalItemSelected(syncInterval = interval))
+                    },
+                    dropDownOffset = dropDownOffset,
+                    maxDropDownHeight = dropDownMaxHeight,
+                )
+            }
+
+            if (state.isSyncingData) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(48.dp),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // Logout Confirmation Dialog
+            if (state.showLogoutConfirmationDialog) {
+                NoteListAlertDialog(
+                    title = stringResource(id = R.string.unsync_title),
+                    body = stringResource(id = R.string.unsync_message),
+                    confirmText = stringResource(R.string.sync_now),
+                    dismissText = stringResource(R.string.logout_without_syncing),
+                    onConfirmClick = {
+                        onAction(SettingsAction.OnSyncAndLogout)
+                    },
+                    onDismissClick = {
+                        onAction(SettingsAction.OnConfirmLogout)
+                    }
+                )
+            }
         }
     }
 }

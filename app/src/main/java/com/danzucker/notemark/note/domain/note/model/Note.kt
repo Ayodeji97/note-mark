@@ -10,7 +10,7 @@ data class Note(
     val title: String,
     val content: String,
     val createdAt: Instant,
-    val lastEditAt: Instant,
+    val lastEditedAt: Instant,
     val saveStatus: NoteSaveStatus = NoteSaveStatus.DRAFT
 )
 

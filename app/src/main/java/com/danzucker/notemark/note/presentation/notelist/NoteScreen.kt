@@ -83,6 +83,7 @@ fun NoteScreen(
        topBar = {
            NoteMarkTopAppBar(
                title = stringResource(id = R.string.app_name),
+               hasInternetConnection = state.isDeviceConnected,
                actionContent = {
                    Row(
                        horizontalArrangement = Arrangement.spacedBy(11.dp)

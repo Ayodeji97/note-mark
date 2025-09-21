@@ -39,7 +39,7 @@ fun NoteMarkTopAppBar(
     modifier: Modifier = Modifier,
     title: String? = null,
     onTitleClick: () -> Unit = {},
-    hasInternetConnection: Boolean = false,
+    hasInternetConnection: Boolean = true,
     titleTextSize: TextUnit = fontSizeMediumLarge20,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
     titleTextOffset: IntOffset = IntOffset(0, 0),

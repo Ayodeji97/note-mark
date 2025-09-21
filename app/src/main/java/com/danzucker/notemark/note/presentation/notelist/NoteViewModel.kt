@@ -2,13 +2,11 @@
 
 package com.danzucker.notemark.note.presentation.notelist
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.danzucker.notemark.core.data.networkchecker.DeviceNetworkChecker
 import com.danzucker.notemark.core.domain.sessionstorage.SessionStorage
 import com.danzucker.notemark.core.domain.util.Result
-import com.danzucker.notemark.core.presentation.util.UiText
 import com.danzucker.notemark.note.domain.note.NoteRepository
 import com.danzucker.notemark.note.domain.note.model.NoteSaveStatus
 import com.danzucker.notemark.note.domain.note.util.generateUUID
@@ -32,7 +30,8 @@ import kotlin.time.ExperimentalTime
 
 class NoteViewModel(
     private val sessionStorage: SessionStorage,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val deviceNetworkChecker: DeviceNetworkChecker
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -47,6 +46,7 @@ class NoteViewModel(
             if (!hasLoadedInitialData) {
                 /** Load initial data here **/
                 observeNotes()
+                observeNetworkChanges()
                 getProfileInitials()
                 deleteDraftNotes()
                 hasLoadedInitialData = true
@@ -86,24 +86,39 @@ class NoteViewModel(
             .launchIn(viewModelScope)
     }
 
+    private fun observeNetworkChanges() {
+        deviceNetworkChecker.isDeviceConnected()
+            .onEach { isConnected ->
+                _state.update {
+                    it.copy(
+                        isDeviceConnected = isConnected
+                    )
+                }
+
+                if (isConnected) {
+                    fetchNotes() // check if you should call this here
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     private fun fetchNotes() {
         viewModelScope.launch {
             noteRepository.fetchNotes()
         }
     }
-
     private fun onCreateNoteClick() {
         viewModelScope.launch {
             val note = NoteUi(
                 id = generateUUID(),
-                title = "New Note",
+                title = "New Note", // Default title, can be changed later
                 createdAt = Clock.System.now(),
                 lastEditAt = Clock.System.now(),
                 saveStatus = NoteSaveStatus.DRAFT
             )
 
             eventChannel.send(NoteEvent.OnCreateNoteClick(note.id))
-            val result = noteRepository.createNote(note.toNote())
+            val result = noteRepository.upsertNote(note.toNote())
 
             if (result is Result.Error) {
                 println("Error creating note...")

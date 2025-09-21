@@ -17,7 +17,7 @@ fun NoteEntity.toNote(): Note {
         title = title,
         content = content,
         createdAt = Instant.parse(createdAt),
-        lastEditAt = Instant.parse(lastEditAt),
+        lastEditedAt = Instant.parse(lastEditAt),
         saveStatus = NoteSaveStatus.valueOf(saveStatus) // Convert string to enum
     )
 }
@@ -28,7 +28,7 @@ fun Note.toNoteEntity(): NoteEntity {
         title = title,
         content = content,
         createdAt = createdAt.toString(),
-        lastEditAt = lastEditAt.toString(),
+        lastEditAt = lastEditedAt.toString(),
         saveStatus = saveStatus.name // Convert enum to string
     )
 }
@@ -39,7 +39,7 @@ fun NoteDto.toNote(): Note {
         title = title,
         content = content,
         createdAt = Instant.parse(createdAt),
-        lastEditAt = lastEditAt?.let { Instant.parse(it) } ?: Instant.parse(createdAt)
+        lastEditedAt = lastEditAt?.let { Instant.parse(it) } ?: Instant.parse(createdAt)
     )
 }
 
@@ -49,7 +49,7 @@ fun Note.toNoteDto(): NoteDto {
         title = title,
         content = content,
         createdAt = createdAt.toString(),
-        lastEditAt = lastEditAt.toString()
+        lastEditAt = lastEditedAt.toString()
     )
 }
 
